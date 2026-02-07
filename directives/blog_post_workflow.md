@@ -26,10 +26,14 @@ Create a high-impact blog post based on recent economic or real estate news (las
     - **Format**: HTML (ready to paste into a blog editor).
     - **Tone**: Informative, easy to understand.
     - **Requirements**:
+        - **Length**: Minimum 2000 characters. Deep dive analysis required.
+        - **Tone**: Professional, authoritative yet accessible (like an expert columnist).
+        - **Prohibited**: Do NOT use phrases like "AI SEO optimized", "I hope this helps", "In this blog post", or any meta-commentary about the writing process.
         - Explain difficult terms simply.
-        - Provide concrete examples.
-        - Adhere to AI SEO best practices (keywords in title/headers, semantic HTML tags).
-        - Structure: Title (H1), Introduction, Main Body (H2, H3), Conclusion.
+        - Provide concrete examples and data points.
+        - Structure: Title (H1), Introduction (Hook), Detailed Analysis (H2s), Practical Implications (H3s), **FAQ (3-5 Q&A)**, Conclusion (Future Outlook).
+        - **Footer**: MUST include the following disclaimer at the very bottom:
+          > "포함된 이미지는 AI 기술을 활용하여 생성되었습니다."
 
 4.  **Generate Images**:
     - **Image 1 (Main)**: Realistic, high-quality photo style relevant to the news topic. Builds trust.
