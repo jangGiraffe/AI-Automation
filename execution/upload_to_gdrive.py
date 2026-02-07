@@ -55,6 +55,16 @@ def upload_file(service, file_path, folder_id, mime_type=None):
         return None
 
 def create_folder(service, folder_name, parent_id):
+    # [MODIFIED] Check if folder already exists
+    query = f"mimeType='application/vnd.google-apps.folder' and name='{folder_name}' and '{parent_id}' in parents and trashed=false"
+    results = service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
+    items = results.get('files', [])
+    
+    if items:
+        # Found existing folder, return its ID
+        print(f"Found existing folder: {folder_name} (ID: {items[0]['id']})")
+        return items[0]['id']
+
     file_metadata = {
         'name': folder_name,
         'mimeType': 'application/vnd.google-apps.folder',

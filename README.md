@@ -27,9 +27,13 @@
 #### 📝 실행 방법
 이 프로젝트는 **`directives/blog_post_workflow.md`** 에 정의된 절차를 따릅니다.
 
-1. **설정**:
-   - `.env` 파일 설정 (필요시)
-   - `credentials.json` (Google Drive API) 배치
+1. **설정 (Setup)**:
+   - **환경 변수**:
+     - `.env.example`을 `.env`로 복사합니다.
+     - `GOOGLE_API_KEY`에 **Google AI Studio API Key**를 입력합니다. (이미지 및 해시태그 생성용)
+   - **Google Drive 인증**:
+     - Google Cloud Console에서 다운로드한 `credentials.json` 파일을 프로젝트 루트(`c:\study\autoPostFlow\`)에 위치시킵니다.
+     - 최초 실행 시 브라우저 창이 열리며 인증이 진행됩니다.
 2. **AI에게 요청**:
    > "`directives/blog_post_workflow.md`에 따라 블로그 포스팅을 진행해줘."
 

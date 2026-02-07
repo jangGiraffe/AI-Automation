@@ -38,9 +38,24 @@ Create a high-impact blog post based on recent economic or real estate news (las
 4.  **Generate Images**:
     - **Image 1 (Main)**: Realistic, high-quality photo style relevant to the news topic. Builds trust.
     - **Image 2 (Context)**: Pixel art (Dot style), World of Warcraft fantasy concept, metaphorically related to the topic.
+    - **Output**: Images should be saved in the **same directory** as the HTML file (Flat Structure).
+
+    > **Note**: If image generation fails (e.g., 429 Quota Exceeded or 400 Billing Required), proceed to Step 4-1.
+
+4-1. **Retry Image Generation (Optional)**:
+    - If images are missing due to API limits, use the retry script.
+    - Command: `py execution/retry_images.py <path_to_html_file>`
+    - **Logic**: 
+        - Parses HTML for `<img>` tags.
+        - Prioritizes `data-prompt` (or `alt`).
+        - Retries with Gemini (Imagen) API until successful.
+        - Updates HTML `src` if necessary (removes `images/` prefix for flat structure).
 
 5.  **Generate Hashtags**:
     - 10 relevant hashtags for blog visibility.
+    - **Retry Logic**: If hashtags are missing or fail to generate initially, use `execution/generate_hashtags.py`.
+    - Command: `py execution/generate_hashtags.py <path_to_html_file>`
+    - Logic: Reads HTML text content, requests hashtags from Gemini API (REST), and appends them to the HTML.
 
 6.  **Upload to Google Drive**:
     - Upload the entire `result/<YYYY-MM-DD>` folder to the specified Google Drive Folder ID.
