@@ -47,6 +47,13 @@ def generate_hashtags(html_path):
                 hashtags = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 print(f"Generated Hashtags: {hashtags}")
 
+                # Save to hashtags.txt
+                base_dir = os.path.dirname(html_path)
+                hashtag_file_path = os.path.join(base_dir, "hashtags.txt")
+                with open(hashtag_file_path, "w", encoding="utf-8") as hf:
+                    hf.write(hashtags)
+                print(f"Hashtags saved to: {hashtag_file_path}")
+
                 # Append to HTML
                 hashtag_div = soup.new_tag("div", attrs={"class": "hashtag-section", "style": "margin-top: 30px; font-size: 0.9em; color: #718096; text-align: center;"})
                 hashtag_div.string = hashtags

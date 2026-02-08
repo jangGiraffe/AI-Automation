@@ -2,6 +2,7 @@ import os
 import time
 import requests
 import re
+import sys
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
@@ -89,7 +90,7 @@ def process_html_for_images(html_path):
     
     html_modified = False
 
-    for img in img_tags:
+    for i, img in enumerate(img_tags):
         src = img.get('src')
         alt = img.get('alt', '')
         prompt = img.get('data-prompt', alt) 
@@ -97,14 +98,21 @@ def process_html_for_images(html_path):
         if not src:
             continue
         
-        # [MODIFIED] Flat structure: Strip 'images/' directory from src if present
-        if "images/" in src or "images\\" in src:
-            filename = os.path.basename(src)
-            img['src'] = filename # Update HTML src
-            src = filename
+        # Determine target local filename
+        # If it's already a local file, use it. If it's external/placeholder, create a new name.
+        if src.startswith("http") or src.startswith("https"):
+            # It's an external URL (placeholder), so we want to save it locally
+            filename = f"image_{i+1}.png" # e.g., image_1.png
+            img['src'] = filename
             html_modified = True
+            print(f"Mapped external src '{src}' to local file '{filename}'")
+        elif "images/" in src or "images\\" in src:
+             # Fix old 'images/' path
+             filename = os.path.basename(src)
+             img['src'] = filename
+             html_modified = True
         else:
-            filename = os.path.basename(src)
+             filename = os.path.basename(src)
 
         # Construct full local path (flat structure: same as HTML)
         image_path = os.path.normpath(os.path.join(base_dir, filename))

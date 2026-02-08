@@ -29,7 +29,9 @@ Create a high-impact blog post based on recent economic or real estate news (las
         - **Style**: Strictly follow the CSS and HTML structure defined in `directives/blog_post_template.html`.
         - **Length**: Minimum 2000 characters. Deep dive analysis required.
         - **Tone**: Professional, authoritative yet accessible (like an expert columnist).
-        - **Prohibited**: Do NOT use phrases like "AI SEO optimized", "I hope this helps", "In this blog post", or any meta-commentary about the writing process.
+        - **Prohibited**: 
+            - Do NOT use phrases like "AI SEO optimized", "I hope this helps", "In this blog post", or any meta-commentary about the writing process.
+            - **No Title Prefixes**: Do NOT use prefixes like `[긴급 분석]`, `[속보]`, `[Review]` in the H1 title. Keep the title clean and descriptive.
         - Explain difficult terms simply.
         - Provide concrete examples and data points.
         - Structure: Title (H1), Introduction (Hook), Detailed Analysis (H2s), Practical Implications (H3s), **FAQ (3-5 Q&A)**, Conclusion (Future Outlook).
@@ -37,20 +39,17 @@ Create a high-impact blog post based on recent economic or real estate news (las
           > "포함된 이미지는 AI 기술을 활용하여 생성되었습니다."
 
 4.  **Generate Images**:
-    - **Image 1 (Main)**: Realistic, high-quality photo style relevant to the news topic. Builds trust.
-    - **Image 2 (Context)**: Pixel art (Dot style), World of Warcraft fantasy concept, metaphorically related to the topic.
-    - **Output**: Images should be saved in the **same directory** as the HTML file (Flat Structure).
+    - **Step 4-A: Agent Generation (Preferred)**
+        - The AI Agent attempts to generate images using the `generate_image` tool during the interactive session.
+        - **Image 1 (Main)**: Realistic, high-quality photo style.
+        - **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
+        - *Note*: This saves the user's API quota if the Agent's tool is available.
 
-    > **Note**: If image generation fails (e.g., 429 Quota Exceeded or 400 Billing Required), proceed to Step 4-1.
-
-4-1. **Retry Image Generation (Optional)**:
-    - If images are missing due to API limits, use the retry script.
-    - Command: `py execution/retry_images.py <path_to_html_file>`
-    - **Logic**: 
-        - Parses HTML for `<img>` tags.
-        - Prioritizes `data-prompt` (or `alt`).
-        - Retries with Gemini (Imagen) API until successful.
-        - Updates HTML `src` if necessary (removes `images/` prefix for flat structure).
+    - **Step 4-B: Script Fallback (Automation/Retry)**
+        - If the Agent fails or if running in a fully automated mode without an active agent session:
+        - Use `execution/retry_images.py`.
+        - Command: `py execution/retry_images.py <path_to_html_file>`
+        - This script uses the `GOOGLE_API_KEY` from `.env`.
 
 5.  **Generate Hashtags**:
     - 10 relevant hashtags for blog visibility.
@@ -65,6 +64,20 @@ Create a high-impact blog post based on recent economic or real estate news (las
         - Checks for existing folder at `result/<YYYY-MM-DD>` (or creates indexed version if exists).
         - Uploads all content to the date-indexed folder on Google Drive.
     - Requires `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`, `python-dotenv`.
+
+7.  **Upload to Tistory (Selenium)**:
+    - **Goal**: Automate posting to Tistory blog using Selenium WebDriver.
+    - **Command**: `py execution/upload_to_tistory_selenium.py result/<YYYY-MM-DD>`
+    - **Prerequisites**:
+        - `.env` must contain `TISTORY_ID`, `TISTORY_PW`, `TISTORY_BLOG_NAME`.
+        - Chrome browser installed.
+    - **Process**:
+        - Auto-login to Kakao/Tistory.
+        - Injects HTML content.
+        - **Image Upload**: Replaces local image placeholders (`src="image1.png"`) with actual uploaded images by switching to Basic Mode.
+        - **Hashtags**: Injects tags from `hashtags.txt` (or extracted from HTML).
+        - **Publish**: Saves as **Private** (비공개) for final review.
+    - **Note**: Monitor the browser for any 2FA or CAPTCHA requirements during login.
 
 ## Output
 - `blog_post.html`: The complete blog post content.
