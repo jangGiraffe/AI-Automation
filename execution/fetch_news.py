@@ -3,6 +3,7 @@ import urllib.parse
 import xml.etree.ElementTree as ET
 import json
 import os
+import sys
 from datetime import datetime, timedelta
 
 def fetch_google_news(query):
@@ -43,7 +44,13 @@ def parse_news(xml_content):
         return []
 
 def main():
-    queries = ["경제", "부동산"]
+    # Use command line arguments if provided, otherwise default
+    if len(sys.argv) > 1:
+        queries = sys.argv[1:]
+    else:
+        queries = ["경제", "부동산"]
+    
+    print(f"Fetching news for keywords: {queries}")
     all_news = []
     
     for query in queries:

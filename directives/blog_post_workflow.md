@@ -8,7 +8,7 @@ Create a high-impact blog post based on recent economic or real estate news (las
 - Region: South Korea (KR)
 - Language: Korean (ko)
 - **Google Drive**:
-    - Folder ID: `YOUR_FOLDER_ID` (Set in .env or provide at runtime)
+    - Folder ID: Managed in `.env` as `GOOGLE_DRIVE_PARENT_FOLDER_ID`.
     - Credentials Path: `credentials.json` (User must provide)
 
 ## Steps
@@ -26,6 +26,7 @@ Create a high-impact blog post based on recent economic or real estate news (las
     - **Format**: HTML (ready to paste into a blog editor).
     - **Tone**: Informative, easy to understand.
     - **Requirements**:
+        - **Style**: Strictly follow the CSS and HTML structure defined in `directives/blog_post_template.html`.
         - **Length**: Minimum 2000 characters. Deep dive analysis required.
         - **Tone**: Professional, authoritative yet accessible (like an expert columnist).
         - **Prohibited**: Do NOT use phrases like "AI SEO optimized", "I hope this helps", "In this blog post", or any meta-commentary about the writing process.
@@ -58,12 +59,16 @@ Create a high-impact blog post based on recent economic or real estate news (las
     - Logic: Reads HTML text content, requests hashtags from Gemini API (REST), and appends them to the HTML.
 
 6.  **Upload to Google Drive**:
-    - Upload the entire `result/<YYYY-MM-DD>` folder to the specified Google Drive Folder ID.
-    - Requires `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`.
+    - Command: `py execution/upload_to_gdrive.py result/<YYYY-MM-DD>`
+    - **Logic**:
+        - Reads parent folder ID from `.env`.
+        - Checks for existing folder at `result/<YYYY-MM-DD>` (or creates indexed version if exists).
+        - Uploads all content to the date-indexed folder on Google Drive.
+    - Requires `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`, `python-dotenv`.
 
 ## Output
 - `blog_post.html`: The complete blog post content.
-- `images/`: Directory containing the generated images.
+
 - `hashtags.txt`: List of hashtags.
 - **Directory naming convention**:
     - Default: `result/<YYYY-MM-DD>/`
