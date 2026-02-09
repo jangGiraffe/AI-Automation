@@ -45,14 +45,20 @@ Create a high-impact blog post based on recent economic or real estate news (las
 
 4.  **Generate Images**:
     - **Step 4-A: Agent Generation (Preferred)**
-        - The AI Agent attempts to generate images using the `generate_image` tool during the interactive session.
-        - **Image 1 (Main)**: Realistic, high-quality photo style.
-        - **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
-        - *Note*: This saves the user's API quota if the Agent's tool is available.
-        - **Error Handling**: If the Agent encounters a **503 Service Unavailable** error:
-            1.  **Check Artifacts**: Manually check the agent's artifact directory (e.g., `.../brain/...`) for any orphaned images.
-            2.  **Recover**: If found, copy them to the `result/<YYYY-MM-DD>` folder and rename correctly.
-            3.  **Proceed**: Only run the fallback script if no images are found.
+        1.  **Check Artifacts First (CRITICAL)**:
+            - Before generating new images, use `list_dir` on the Agent's artifact directory (e.g., `.../brain/...`).
+            - Look for existing images that match the topic (e.g., `image1_...png`).
+            - **If found**: Copy them to the `result/<YYYY-MM-DD>` folder using `copy` command and rename to `image1.png`, `image2.png`. **SKIP GENERATION.**
+            - **If NOT found**: Proceed to generation.
+        2.  **Generate Images**:
+            - The AI Agent attempts to generate images using the `generate_image` tool during the interactive session.
+            - **Image 1 (Main)**: Realistic, high-quality photo style.
+            - **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
+            - *Note*: This saves the user's API quota if the Agent's tool is available.
+        3.  **Error Handling**: If the Agent encounters a **503 Service Unavailable** error:
+            - **Check Artifacts**: Manually check the agent's artifact directory again.
+            - **Recover**: If found, copy them to the `result/<YYYY-MM-DD>` folder and rename correctly.
+            - **Proceed**: Only run the fallback script if no images are found.
 
     - **Step 4-B: Script Fallback (Automation/Retry)**
         - If the Agent fails or if running in a fully automated mode without an active agent session:
