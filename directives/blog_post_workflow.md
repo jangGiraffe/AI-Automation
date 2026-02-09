@@ -13,16 +13,21 @@ Create a high-impact blog post based on recent economic or real estate news (las
 
 ## Steps
 
-1.  **Fetch News**:
+1.  **Create Output Directory** (Step 0):
+    -   **Action**: Create a folder named `result/<YYYY-MM-DD>`.
+    -   **Rule**: All subsequent files (`blog_post.html`, images, `hashtags.txt`) MUST be saved directly inside this folder.
+    -   *Example*: `result/2026-02-09/blog_post.html`
+
+2.  **Fetch News**:
     - Use `execution/fetch_news.py` to get recent news items.
     - Source: Google News RSS.
     - Output: `.tmp/news_data.json` containing titles, links, pubDates, and descriptions.
 
-2.  **Select Topic**:
+3.  **Select Topic**:
     - Analyze the news items.
     - Criteria: High impact, potential for high click-through rate (CTR), relevant to general public.
 
-3.  **Generate Content**:
+4.  **Generate Content**:
     - **Format**: HTML (ready to paste into a blog editor).
     - **Tone**: Informative, easy to understand.
     - **Requirements**:

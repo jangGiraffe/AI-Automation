@@ -1,7 +1,12 @@
 from email.utils import parsedate_to_datetime
 from datetime import datetime, timedelta, timezone
+import sys
 
-# ... imports ...
+import urllib.request
+import urllib.parse
+import xml.etree.ElementTree as ET
+import json
+import os
 
 def fetch_google_news(query):
     # ... existing code ...
