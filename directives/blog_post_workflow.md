@@ -49,6 +49,10 @@ Create a high-impact blog post based on recent economic or real estate news (las
         - **Image 1 (Main)**: Realistic, high-quality photo style.
         - **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
         - *Note*: This saves the user's API quota if the Agent's tool is available.
+        - **Error Handling**: If the Agent encounters a **503 Service Unavailable** error:
+            1.  **Check Artifacts**: Manually check the agent's artifact directory (e.g., `.../brain/...`) for any orphaned images.
+            2.  **Recover**: If found, copy them to the `result/<YYYY-MM-DD>` folder and rename correctly.
+            3.  **Proceed**: Only run the fallback script if no images are found.
 
     - **Step 4-B: Script Fallback (Automation/Retry)**
         - If the Agent fails or if running in a fully automated mode without an active agent session:
