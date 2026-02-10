@@ -43,36 +43,38 @@ Create a high-impact blog post based on recent economic or real estate news (las
         - **Footer**: MUST include the following disclaimer at the very bottom:
           > "포함된 이미지는 AI 기술을 활용하여 생성되었습니다."
 
-4.  **Generate Images**:
-    - **Step 4-A: Agent Generation (Preferred)**
-        1.  **Check Artifacts First (CRITICAL)**:
-            - Before generating new images, use `list_dir` on the Agent's artifact directory (e.g., `.../brain/...`).
-            - Look for existing images that match the topic (e.g., `image1_...png`).
-            - **If found**: Copy them to the `result/<YYYY-MM-DD>` folder using `copy` command and rename to `image1.png`, `image2.png`. **SKIP GENERATION.**
-            - **If NOT found**: Proceed to generation.
-        2.  **Generate Images**:
-            - The AI Agent attempts to generate images using the `generate_image` tool during the interactive session.
-            - **Image 1 (Main)**: Realistic, high-quality photo style.
-            - **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
-            - *Note*: This saves the user's API quota if the Agent's tool is available.
-        3.  **Error Handling**: If the Agent encounters a **503 Service Unavailable** error:
-            - **Check Artifacts**: Manually check the agent's artifact directory again.
-            - **Recover**: If found, copy them to the `result/<YYYY-MM-DD>` folder and rename correctly.
-            - **Proceed**: Only run the fallback script if no images are found.
+5.  **Generate Images**:
+    -   **Step 5-A: Agent Generation (Preferred)**
+        1.  **Check Artifacts First (CRITICAL - DO NOT SKIP)**:
+            -   **STRICT RULE**: **Artifacts 패널에 어떤 파일이라도 존재한다면, 무조건 이미지로 간주합니다. 이 경우 `generate_image` 도구 호출은 엄격히 금지됩니다.**
+            -   **Action**: 이미지 생성을 시도하기 전, Artifacts 패널을 확인하세요. 파일명이 이미지처럼 보이지 않아도(확장자가 없거나 임의의 이름이라도) **무조건 이미지로 취급**합니다.
+            -   **Logic**:
+                -   **Duplicate Generation Forbidden**: Artifact가 하나라도 존재하면, 즉시 해당 파일을 `result/<YYYY-MM-DD>/` 폴더로 복사(`copy`) 및 리네임(`image1.png` 등)하고 **이 단계를 즉시 종료**하세요.
+                -   **절대로** 이미 있는 Artifact를 무시하고 새로 만들지 마십시오. 이는 불필요한 비용과 시간을 낭비합니다.
 
-    - **Step 4-B: Script Fallback (Automation/Retry)**
+        2.  **Generate Images**:
+            -   **Condition**: 위 1번 단계에서 **이미지를 하나도 찾지 못했을 경우에만** `generate_image`를 실행합니다.
+            -   **Image 1 (Main)**: Realistic, high-quality photo style.
+            -   **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
+
+        3.  **Error Handling & Ghost Success Recovery**:
+            -   **Context**: 503 Error나 타임아웃이 발생하더라도 시스템 내부적으로는 이미지가 생성되어 저장되었을 가능성이 매우 높습니다 (스크린샷 증상).
+            -   **Action**: 에러 발생 시 즉시 재시도하지 말고, 5초 대기 후 `find_by_name`으로 다시 `*.png`를 검색하세요.
+            -   **Recovery**: 새로 생성된 파일이 발견되면 에러 메시지를 무시하고 1번 단계의 복사/리네임 로직을 수행하세요.
+
+    - **Step 5-B: Script Fallback (Automation/Retry)**
         - If the Agent fails or if running in a fully automated mode without an active agent session:
         - Use `execution/retry_images.py`.
         - Command: `py execution/retry_images.py <path_to_html_file>`
         - This script uses the `GOOGLE_API_KEY` from `.env`.
 
-5.  **Generate Hashtags**:
+6.  **Generate Hashtags**:
     - 10 relevant hashtags for blog visibility.
     - **Retry Logic**: If hashtags are missing or fail to generate initially, use `execution/generate_hashtags.py`.
     - Command: `py execution/generate_hashtags.py <path_to_html_file>`
     - Logic: Reads HTML text content, requests hashtags from Gemini API (REST), and appends them to the HTML.
 
-6.  **Upload to Google Drive**:
+7.  **Upload to Google Drive**:
     - Command: `py execution/upload_to_gdrive.py result/<YYYY-MM-DD>`
     - **Logic**:
         - Reads parent folder ID from `.env`.
@@ -80,7 +82,7 @@ Create a high-impact blog post based on recent economic or real estate news (las
         - Uploads all content to the date-indexed folder on Google Drive.
     - Requires `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`, `python-dotenv`.
 
-7.  **Upload to Tistory (Selenium)**:
+8.  **Upload to Tistory (Selenium)**:
     - **Goal**: Automate posting to Tistory blog using Selenium WebDriver.
     - **Command**: `py execution/upload_to_tistory_selenium.py result/<YYYY-MM-DD>`
     - **Prerequisites**:

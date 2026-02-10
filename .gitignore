@@ -6,3 +6,4 @@ __pycache__/
 token.pickle
 *.log
 result/
+debug_log.txt
