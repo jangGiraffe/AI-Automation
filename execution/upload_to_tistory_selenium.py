@@ -588,14 +588,12 @@ def main():
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
-        print("Script execution finished. Browser will remain open for debugging.")
-        print("To close the browser, press Ctrl+C in this terminal.")
+        print("Script execution finished. Browser will close in 5 seconds.")
+        time.sleep(5)
         try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            print("Closing driver...")
             driver.quit()
+        except:
+            pass
 
 if __name__ == "__main__":
     main()

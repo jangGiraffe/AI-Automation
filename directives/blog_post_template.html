@@ -1,203 +1,95 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!--
+  Blog Post Template (Tistory Native Style)
+  ==========================================
+  이 템플릿은 티스토리 기본 에디터 스타일을 따릅니다.
+  커스텀 CSS 없이, 티스토리 hELLO 스킨의 네이티브 스타일만 사용합니다.
+  
+  규칙:
+  - <h2>, <h3>에는 data-ke-size 속성을 사용합니다 (h2: "size26", h3: "size23")
+  - <p>에는 data-ke-size="size16" 속성을 사용합니다
+  - <ul>에는 style="list-style-type: disc;" data-ke-list-type="disc" 속성을 사용합니다
+  - 이미지는 <figure class="imageblock alignCenter"> 티스토리 기본 구조를 사용합니다
+  - ★ 이미지 data-ke-mobilestyle은 반드시 "widthContent"를 사용합니다 (widthOrigin 사용 금지!)
+    → widthOrigin은 원본 크기(1408px 등)로 렌더링되어 넓은 화면에서 본문 영역을 넘어 튀어나옵니다.
+    → widthContent는 콘텐츠 영역 폭에 맞게 자동 조절됩니다.
+  - <b> 태그로 강조합니다 (커스텀 하이라이트 CSS 없음)
+  - 커스텀 <style> 블록을 사용하지 않습니다
+-->
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Title Here]</title>
-    <style>
-        body {
-            font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-            line-height: 1.8;
-            color: #2d3748;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f7fafc;
-        }
+<p data-ke-size="size16">&nbsp;</p>
 
-        .container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
+<figure class="imageblock alignCenter" data-ke-mobilestyle="widthContent" data-filename="image1.png"
+    data-origin-width="640" data-origin-height="640">
+    <span data-url="" data-phocus="">
+        <img src="image1.png" data-filename="image1.png" data-origin-width="640" data-origin-height="640" />
+    </span>
+    <figcaption>[Image Caption]</figcaption>
+</figure>
 
-        h1 {
-            color: #c53030;
-            border-bottom: 3px solid #fc8181;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-            word-break: keep-all;
-        }
+<h1>[Title]</h1>
 
-        h2 {
-            color: #9b2c2c;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            border-left: 5px solid #f56565;
-            padding-left: 15px;
-            font-size: 1.5em;
-        }
+<p data-ke-size="size16">[Introduction Paragraph - Hook the reader]</p>
 
-        h3 {
-            color: #c05621;
-            margin-top: 30px;
-            font-size: 1.2em;
-        }
+<blockquote data-ke-style="style2">
+    <p data-ke-size="size16">💡 <b>핵심 포인트 요약</b></p>
+    <ul style="list-style-type: disc;" data-ke-list-type="disc">
+        <li><b>[Key Point 1]</b>: [Description]</li>
+        <li><b>[Key Point 2]</b>: [Description]</li>
+        <li><b>[Key Point 3]</b>: [Description]</li>
+    </ul>
+</blockquote>
 
-        p {
-            margin-bottom: 1.5em;
-            font-size: 1.1em;
-            text-align: justify;
-        }
+<h2 data-ke-size="size26">1. [Section Title]</h2>
 
-        strong {
-            background: linear-gradient(120deg, #fed7d7 0%, #fed7d7 100%);
-            background-repeat: no-repeat;
-            background-size: 100% 40%;
-            background-position: 0 88%;
-            color: #000;
-        }
+<p data-ke-size="size16">[Content paragraph. Use <b>bold</b> for emphasis. Explain difficult terms simply with concrete
+    examples and data points.]</p>
 
-        .highlight-box {
-            background-color: #fffaf0;
-            border: 1px solid #fbd38d;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 30px 0;
-        }
+<p data-ke-size="size16">[Additional content paragraph.]</p>
 
-        .img-wrapper {
-            text-align: center;
-            margin: 40px 0;
-        }
+<h2 data-ke-size="size26">2. [Section Title]</h2>
 
-        .img-wrapper img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
+<figure class="imageblock alignCenter" data-ke-mobilestyle="widthContent" data-filename="image2.png"
+    data-origin-width="1408" data-origin-height="768">
+    <span data-url="" data-phocus="">
+        <img src="image2.png" data-filename="image2.png" data-origin-width="1408" data-origin-height="768" />
+    </span>
+    <figcaption>[Image Caption]</figcaption>
+</figure>
 
-        .img-wrapper img:hover {
-            transform: scale(1.02);
-        }
+<h3 data-ke-size="size23">[Sub-section Title]</h3>
 
-        .img-caption {
-            font-size: 0.9em;
-            color: #718096;
-            margin-top: 10px;
-            font-style: italic;
-        }
+<p data-ke-size="size16">[Content paragraph.]</p>
 
-        .faq-section {
-            background-color: #f0fff4;
-            padding: 30px;
-            border-radius: 12px;
-            margin-top: 50px;
-            border: 1px solid #c6f6d5;
-        }
+<h2 data-ke-size="size26">3. [Section Title]</h2>
 
-        .faq-title {
-            font-size: 1.4em;
-            color: #276749;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
+<p data-ke-size="size16">[Content paragraph.]</p>
 
-        .faq-item {
-            margin-bottom: 20px;
-        }
+<h2 data-ke-size="size26">❓ FAQ: [Topic] Q&A</h2>
 
-        .faq-q {
-            font-weight: bold;
-            color: #2f855a;
-            margin-bottom: 5px;
-        }
+<h3 data-ke-size="size23">Q1. [Question]</h3>
 
-        .faq-a {
-            color: #4a5568;
-            padding-left: 15px;
-            border-left: 3px solid #9ae6b4;
-        }
+<p data-ke-size="size16">A1. [Answer]</p>
 
-        .footer {
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-            text-align: center;
-            font-size: 0.85em;
-            color: #a0aec0;
-        }
+<h3 data-ke-size="size23">Q2. [Question]</h3>
 
-        .disclaimer-badge {
-            display: inline-block;
-            background-color: #edf2f7;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            color: #718096;
-            margin-top: 10px;
-        }
-    </style>
-</head>
+<p data-ke-size="size16">A2. [Answer]</p>
 
-<body>
-    <div class="container">
+<h3 data-ke-size="size23">Q3. [Question]</h3>
 
-        <div class="img-wrapper">
-            <img src="image1.png" alt="[Alt Text]" data-prompt="[Image Prompt]">
-            <div class="img-caption">[Image Caption]</div>
-        </div>
+<p data-ke-size="size16">A3. [Answer]</p>
 
-        <h1>[Title]</h1>
+<!-- More FAQ items as needed -->
 
-        <p>[Introduction Paragraph]</p>
+<p data-ke-size="size16">&nbsp;</p>
 
-        <div class="highlight-box">
-            <h3>💡 [Highlight Title]</h3>
-            <ul>
-                <li><strong>[Key Point 1]</strong>: [Description]</li>
-                <li><strong>[Key Point 2]</strong>: [Description]</li>
-            </ul>
-        </div>
+<p data-ke-size="size16" style="text-align: center; color: #808080; font-size: 0.9em;">
+    [Hashtags]
+</p>
 
-        <h2>1. [Section Title]</h2>
-        <p>[Content]</p>
+<p data-ke-size="size16" style="text-align: center; color: #a0a0a0; font-size: 0.85em;">
+    Copyright © 2026 AutoPostFlow. All rights reserved.
+</p>
 
-        <h2>2. [Section Title]</h2>
-        <div class="img-wrapper">
-            <img src="image2.png" alt="[Alt Text]" data-prompt="[Image Prompt]">
-            <div class="img-caption">[Image Caption]</div>
-        </div>
-        <h3>[Sub-section Title]</h3>
-        <p>[Content]</p>
-
-        <h2>3. [Section Title]</h2>
-        <p>[Content]</p>
-
-        <div class="faq-section">
-            <div class="faq-title">❓ FAQ: [Topic] Q&A</div>
-            <div class="faq-item">
-                <div class="faq-q">Q1. [Question]</div>
-                <div class="faq-a">A1. [Answer]</div>
-            </div>
-            <!-- More FAQ items -->
-        </div>
-
-        <div class="hashtag-section" style="margin-top: 30px; font-size: 0.9em; color: #718096; text-align: center;">
-            [Hashtags]</div>
-
-        <div class="footer">
-            <p>Copyright © 2026 AutoPostFlow. All rights reserved.</p>
-            <div class="disclaimer-badge">
-                ※ 본 포스팅의 이미지는 AI(Google Gemini)를 통해 생성되었습니다. 실제와 다를 수 있습니다.
-            </div>
-        </div>
-    </div>
-</body>
-
-</html>
+<p data-ke-size="size16" style="text-align: center; color: #a0a0a0; font-size: 0.8em;">
+    ※ 본 포스팅의 이미지는 AI(Google Gemini)를 통해 생성되었습니다. 실제와 다를 수 있습니다.
+</p>

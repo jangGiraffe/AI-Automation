@@ -54,20 +54,26 @@ def generate_hashtags(html_path):
                     hf.write(hashtags)
                 print(f"Hashtags saved to: {hashtag_file_path}")
 
-                # Append to HTML
-                hashtag_div = soup.new_tag("div", attrs={"class": "hashtag-section", "style": "margin-top: 30px; font-size: 0.9em; color: #718096; text-align: center;"})
-                hashtag_div.string = hashtags
-                
-                # Insert before footer or at the end of container
-                footer = soup.find("div", class_="footer")
-                if footer:
-                    footer.insert_before(hashtag_div)
+                # Check for existing hashtag section
+                existing_hashtag_div = soup.find("div", class_="hashtag-section")
+                if existing_hashtag_div:
+                    existing_hashtag_div.string = hashtags
+                    print("Updated existing hashtag section.")
                 else:
-                    container = soup.find("div", class_="container")
-                    if container:
-                        container.append(hashtag_div)
+                    # Create new div
+                    hashtag_div = soup.new_tag("div", attrs={"class": "hashtag-section", "style": "margin-top: 30px; font-size: 0.9em; color: #718096; text-align: center;"})
+                    hashtag_div.string = hashtags
+                    
+                    # Insert before footer or at the end of container
+                    footer = soup.find("div", class_="footer")
+                    if footer:
+                        footer.insert_before(hashtag_div)
                     else:
-                        soup.body.append(hashtag_div)
+                        container = soup.find("div", class_="container")
+                        if container:
+                            container.append(hashtag_div)
+                        else:
+                            soup.body.append(hashtag_div)
 
                 with open(html_path, 'w', encoding='utf-8') as f:
                     f.write(str(soup))
