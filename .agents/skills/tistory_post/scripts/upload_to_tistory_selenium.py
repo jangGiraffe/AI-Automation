@@ -17,11 +17,12 @@ import pyperclip
 load_dotenv()
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: py upload_to_tistory_selenium.py <result_folder_path>")
+    if len(sys.argv) < 3:
+        print("Usage: py upload_to_tistory_selenium.py <result_folder_path> <BlogAlias>")
         sys.exit(1)
 
     result_folder = sys.argv[1]
+    blog_alias = sys.argv[2].upper()
     html_file = os.path.join(result_folder, "blog_post.html")
     hashtag_file = os.path.join(result_folder, "hashtags.txt")
 
@@ -67,13 +68,29 @@ def main():
         else:
              print("No tags found in HTML.")
 
+    # Try reading from category.txt
+    category_file = os.path.join(result_folder, "category.txt")
+    target_category = ""
+    if os.path.exists(category_file):
+        with open(category_file, "r", encoding="utf-8") as f:
+            target_category = f.read().strip()
+        print(f"Target Category: '{target_category}'")
+
     # 2. Setup Selenium
-    tistory_id = os.getenv("TISTORY_ID")
-    tistory_pw = os.getenv("TISTORY_PW")
-    blog_name = os.getenv("TISTORY_BLOG_NAME")
+    tistory_id = None
+    tistory_pw = None
+    blog_name = None
+
+    for i in range(1, 6):
+        env_alias = os.getenv(f"TISTORY_ALIAS_{i}")
+        if env_alias and env_alias.upper() == blog_alias:
+            tistory_id = os.getenv(f"TISTORY_ID_{i}")
+            tistory_pw = os.getenv(f"TISTORY_PW_{i}")
+            blog_name = os.getenv(f"TISTORY_BLOG_NAME_{i}")
+            break
 
     if not tistory_id or not tistory_pw or not blog_name:
-        print("Error: TISTORY_ID, TISTORY_PW, TISTORY_BLOG_NAME must be set in .env")
+        print(f"Error: Could not find complete credentials for alias '{blog_alias}' in .env")
         sys.exit(1)
 
     print("Starting Chrome Driver...")
@@ -545,14 +562,40 @@ def main():
         # 8. Publish
         print("Publishing (Private)...")
         try:
-            # 1. Click 'Complete' (완료)
+            # 1. Set Category (If provided) BEFORE clicking publish layer button
+            if target_category:
+                print(f"  Setting category to: {target_category}...")
+                try:
+                    # Depending on editor mode, we might need to scroll or JS click
+                    cat_btn = WebDriverWait(driver, 5).until(
+                        EC.element_to_be_clickable((By.ID, "category-btn"))
+                    )
+                    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", cat_btn)
+                    time.sleep(0.5)
+                    try:
+                        cat_btn.click()
+                    except:
+                        driver.execute_script("arguments[0].click();", cat_btn)
+                    time.sleep(0.5)
+                    
+                    cat_item = WebDriverWait(driver, 5).until(
+                        EC.element_to_be_clickable((By.XPATH, f"//div[@id='category-list']//div[contains(@class, 'mce-menu-item') and contains(., '{target_category}')]"))
+                    )
+                    # Click via JS fallback to avoid interception
+                    driver.execute_script("arguments[0].click();", cat_item)
+                    print(f"  Category '{target_category}' selected.")
+                    time.sleep(0.5)
+                except Exception as e:
+                    print(f"  Warning: Could not select category '{target_category}'. Is it created in Tistory? Error: {e}")
+
+            # 2. Click 'Complete' (완료)
             publish_layer_btn = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "publish-layer-btn"))
             )
-            publish_layer_btn.click()
-            time.sleep(1)
+            driver.execute_script("arguments[0].click();", publish_layer_btn)
+            time.sleep(1.5)
             
-            # 2. Select Private
+            # 3. Select Private
             print("  Selecting 'Private' visibility...")
             try:
                 # Try explicit radio ID first (common ones)
