@@ -66,7 +66,7 @@ Before using this skill, ensure the following dependencies and environment varia
 - Source: Google News RSS.
 - Output: `.tmp/news_data.json` containing titles, links, pubDates, and descriptions.
 
-### 3. Select Topic & Category
+### 3. Select Topic & Category (Step 2)
 - Analyze the news items.
 - Criteria for Topic: High impact, potential for high click-through rate (CTR), relevant to general public.
 - **Category Selection**: 
@@ -74,7 +74,13 @@ Before using this skill, ensure the following dependencies and environment varia
   - Pick the ONE most relevant category from that comma-separated list.
   - Output this exact category string into `result/<YYYY-MM-DD>/category.txt`.
 
-### 4. Generate Content
+### 4. Fetch Internal Links (Step 3)
+- Use `.agents/skills/tistory_post/scripts/fetch_rss_links.py <BlogName>` to get recent post titles and links from the blog's RSS.
+  - *Note: `<BlogName>` is the technical Tistory blog name (e.g. `iammoneyoil`), NOT the alias.*
+- Output: `.tmp/internal_links.json`.
+- Purpose: To provide data for internal linking in the new post.
+
+### 5. Generate Content (Step 4)
 - **Format**: HTML (ready to paste into a blog editor).
 - **Tone**: Informative, easy to understand, friendly (친근한 ~요체).
 - **Requirements**:
@@ -92,12 +98,12 @@ Before using this skill, ensure the following dependencies and environment varia
         - Break long paragraphs into smaller 2-3 sentence chunks to prevent walls of text.
         - Insert an empty `<p data-ke-size="size16">&nbsp;</p>` between text paragraphs to create visual breathing room (very important for mobile readers).
         - Ensure a horizontal divider `<hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />` is placed right above every `<h2>` heading.
-    - Structure: Title (H1), Introduction (Hook: Greetings with "안녕하세요. 나야 돈기름입니다."), **Very Easy Example (Analogies)**, Detailed Analysis (H2s), Practical Implications (H3s), **FAQ (3-5 Q&A)**, Conclusion (Future Outlook).
+    - Structure: Title (H1), Introduction (Hook: Greetings with "안녕하세요. 나야 돈기름입니다."), **Very Easy Example (Analogies)**, Detailed Analysis (H2s), Practical Implications (H3s), **Internal Links (Max 2 related posts from `.tmp/internal_links.json`)**, **FAQ (3-5 Q&A)**, Conclusion (Future Outlook).
     - **Footer**: MUST include the following disclaimers at the very bottom:
       > "Powered by jangGiraffe GitHub" (with a hyperlink to https://github.com/jangGiraffe/AI-Automation)
       > "포함된 이미지는 AI 기술을 활용하여 생성되었습니다."
 
-### 5. Generate Images
+### 6. Generate Images (Step 5)
 - **⚠️ CRITICAL: 대화 중단/재개 시 규칙 (MUST READ FIRST)**:
     - `generate_image` 호출은 **canceled, failed, timeout 등 어떤 상태로 표시되더라도, 시스템 내부에서 이미지가 이미 생성되었을 가능성이 매우 높습니다.**
     - **따라서**: `generate_image`를 호출한 적이 있는 대화에서 "Continue" 등으로 재개될 경우, **다른 어떤 작업보다 먼저 Brain 폴더 수색(Step 5-A-3)을 즉시 실행**하세요.
@@ -140,13 +146,13 @@ Before using this skill, ensure the following dependencies and environment varia
 - Command: `py .agents/skills/tistory_post/scripts/retry_images.py <path_to_html_file>`
 - This script uses the `GOOGLE_API_KEY` from `.env`.
 
-### 6. Generate Hashtags
+### 7. Generate Hashtags (Step 6)
 - 10 relevant hashtags for blog visibility.
 - **Retry Logic**: If hashtags are missing or fail to generate initially, use `.agents/skills/tistory_post/scripts/generate_hashtags.py`.
 - Command: `py .agents/skills/tistory_post/scripts/generate_hashtags.py <path_to_html_file>`
 - Logic: Reads HTML text content, requests hashtags from Gemini API (REST), and appends them to the HTML.
 
-### 7. Upload to Google Drive
+### 8. Upload to Google Drive (Step 7)
 - Command: `py .agents/skills/tistory_post/scripts/upload_to_gdrive.py result/<YYYY-MM-DD>`
 - **Logic**:
     - Reads parent folder ID from `.env`.
@@ -154,7 +160,7 @@ Before using this skill, ensure the following dependencies and environment varia
     - Uploads all content to the date-indexed folder on Google Drive.
 - Requires `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`, `python-dotenv`.
 
-### 8. Upload to Tistory (Selenium)
+### 9. Upload to Tistory (Selenium) (Step 8)
 - **Goal**: Automate posting to Tistory blog using Selenium WebDriver for a specific `BlogAlias`.
 - **Command**: `py .agents/skills/tistory_post/scripts/upload_to_tistory_selenium.py result/<YYYY-MM-DD> <BlogAlias>` (Be sure to convert the alias to UPPERCASE).
 - **Prerequisites**:

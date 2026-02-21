@@ -1,5 +1,7 @@
 # AI Agent & Workflow Automation Repository
 
+![Banner](https://raw.githubusercontent.com/jangGiraffe/AI-Automation/main/docs/images/banner.png)
+
 **AI 에이전트 및 LLM(Large Language Model)**을 활용한 다양한 업무 자동화 프로젝트를 모아둔 레포지토리입니다.
 복잡한 워크플로우를 분석, 설계, 실행하는 AI 기반 자동화 사례들을 연구하고 구현합니다.
 
@@ -22,10 +24,19 @@
 
 #### 🚀 주요 기능
 - **멀티 블로그 통합 지원**: `.env` 파일에 최대 5개의 티스토리 블로그 관련 정보(Alias, 계정, 블로그명, 주제, 카테고리)를 세팅하여 유연하게 타깃 블로그 전환.
-- **뉴스 수집**: Google News RSS 기반 실시간 데이터 수집 및 분석 (`fetch_news.py`)
+- **뉴스 수집 & 토픽 선정**: Google News RSS 기반 실시간 데이터 수집 및 분석을 통한 최적의 주제 자동 선정 (`fetch_news.py`, `SKILL.md` 기반)
+- **지능형 내부 링크 추천**: 선정된 주제와 연관성이 높은 이전 포스팅을 검색하여 자동으로 본문에 삽입.
 - **자동 카테고리 매칭**: `.env` 설정값을 기반으로 작성된 글을 가장 적합한 카테고리로 자동 배정.
 - **콘텐츠 및 디자인 최적화**: 가독성을 고려한 Tistory HTML 양식 작성 (분리된 문단, 삽입선 포함).
 - **자동 포스팅**: Selenium을 이용한 Tistory 로그인, 파일 업로드 방식을 통한 로컬 이미지 첨부, 비공개 자동 발행 (`upload_to_tistory_selenium.py`)
+
+#### 📷 Service Preview (제작 사례)
+AI 에이전트가 직접 생성한 블로그 포스팅과 이미지의 예시입니다.
+
+| 메인 프리뷰 | 대표 배너 |
+| :---: | :---: |
+| ![Preview](https://raw.githubusercontent.com/jangGiraffe/AI-Automation/main/docs/images/preview_main.png) | ![Banner](https://raw.githubusercontent.com/jangGiraffe/AI-Automation/main/docs/images/banner.png) |
+| *지능형 자동 포스팅 미리보기* | *AI Automation 시스템 공식 이미지* |
 
 #### 📝 실행 방법
 이 프로젝트는 **`.agents/skills/tistory_post/SKILL.md`** 에 정의된 스킬 기반 절차를 따릅니다.
@@ -39,7 +50,7 @@
      - 셀레늄(Selenium) 구동을 위한 **Chrome 브라우저**가 설치되어 있어야 합니다.
 
 2. **AI에게 요청**:
-   > "Tistory Blog Post 스킬을 이용해서, 'MONEY' 블로그에 '미국 주식' 관련 글을 작성해줘."
+   > "Tistory Blog Post 스킬을 이용해서, '돈기름' 블로그에 '엔비디아 주가' 관련 글을 작성해줘."
 
 3. **결과물 (자동 생성)**:
    - `result/[날짜]/` 폴더에 생성된 원본 HTML, 이미지, 검색된 해시태그 목록, 매칭된 카테고리 텍스트 저장.
