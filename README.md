@@ -1,6 +1,6 @@
 # AI Agent & Workflow Automation Repository
 
-![Banner](https://raw.githubusercontent.com/jangGiraffe/AI-Automation/main/docs/images/banner.png)
+![Banner](docs/images/banner.png)
 
 **AI 에이전트 및 LLM(Large Language Model)**을 활용한 다양한 업무 자동화 프로젝트를 모아둔 레포지토리입니다.
 복잡한 워크플로우를 분석, 설계, 실행하는 AI 기반 자동화 사례들을 연구하고 구현합니다.
@@ -29,14 +29,6 @@
 - **자동 카테고리 매칭**: `.env` 설정값을 기반으로 작성된 글을 가장 적합한 카테고리로 자동 배정.
 - **콘텐츠 및 디자인 최적화**: 가독성을 고려한 Tistory HTML 양식 작성 (분리된 문단, 삽입선 포함).
 - **자동 포스팅**: Selenium을 이용한 Tistory 로그인, 파일 업로드 방식을 통한 로컬 이미지 첨부, 비공개 자동 발행 (`upload_to_tistory_selenium.py`)
-
-#### 📷 Service Preview (제작 사례)
-AI 에이전트가 직접 생성한 블로그 포스팅과 이미지의 예시입니다.
-
-| 메인 프리뷰 | 대표 배너 |
-| :---: | :---: |
-| ![Preview](https://raw.githubusercontent.com/jangGiraffe/AI-Automation/main/docs/images/preview_main.png) | ![Banner](https://raw.githubusercontent.com/jangGiraffe/AI-Automation/main/docs/images/banner.png) |
-| *지능형 자동 포스팅 미리보기* | *AI Automation 시스템 공식 이미지* |
 
 #### 📝 실행 방법
 이 프로젝트는 **`.agents/skills/tistory_post/SKILL.md`** 에 정의된 스킬 기반 절차를 따릅니다.
