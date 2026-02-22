@@ -6,7 +6,7 @@ description: Workflow for creating a high-impact Tistory blog post based on rece
 # Create Tistory Post Skill
 
 ## Goal
-Create a high-impact Tistory blog post based on recent economic or real estate news (last 6h), optimized for AI SEO, with specific image and hashtag requirements.
+Create an **ultra-long-form, high-impact 'Mega Content'** Tistory blog post (30,000~40,000 characters) based on recent economic, IT, or real estate news, optimized for AI SEO with deep structural analysis and visualization.
 
 ## Inputs
 - **Topic** (주제): The topic to generate the post about (e.g. "미국 주식", "비트코인", "금리 인상"). If not provided, the Agent should use the default topic for the alias (`TISTORY_DEFAULT_TOPIC_<ALIAS>`).
@@ -82,24 +82,37 @@ Before using this skill, ensure the following dependencies and environment varia
 
 ### 5. Generate Content (Step 4)
 - **Format**: HTML (ready to paste into a blog editor).
-- **Tone**: Informative, easy to understand, friendly (친근한 ~요체).
-- **Requirements**:
+- **Tone**: Professional, informative, yet friendly (친근한 ~요체).
+- **Requirements (Mega Content Standard)**:
     - **Style**: Strictly follow the CSS and HTML structure defined in `.agents/skills/tistory_post/templates/blog_post_template.html`.
-    - **Image Rule**: `<figure>` 태그의 `data-ke-mobilestyle`은 반드시 `"widthContent"`를 사용. (`widthOrigin` 사용 금지 — 넓은 화면에서 이미지가 본문 영역을 넘어 튀어나옴)
-    - **Length**: 약 10000자 (9800~10200자).
-    - **Insightful Analysis**: 단순 사실이나 뉴스의 요약에 그치지 말고, 독자에게 새로운 시각이나 실질적인 조언을 제공할 수 있는 **깊이 있고 통찰력 있는(Insightful) 분석**을 반드시 포함하세요.
+    - **Image Rule**: `<figure>` 태그의 `data-ke-mobilestyle`은 반드시 `"widthContent"`를 사용.
+    - **Length**: **초장문 메가 콘텐츠 (30,000~40,000자 내외)**. 단순히 양을 늘리는 것이 아니라, 독자가 전자책 한 권을 읽는 듯한 깊이를 제공해야 합니다.
+    - **Structural Depth**:
+        - **Detailed 목차 (Table of Contents)**: 포스팅 시작 부분에 클릭 가능한 구조의 상세 목차를 포함하세요.
+        - **Multi-level Headings**: 최소 8개 이상의 `<h2>` 주제를 설정하고, 각 주제 하위에 `<h3>`, `<h4>` 소주제를 촘촘하게 배치하여 논리적 구조를 완성하세요.
+    - **Insightful Analysis**: 
+        - 단순 뉴스 요약 금지. 
+        - **입체적 분석**: 기술적 원리, 역사적 배경, 글로벌 시장(US, China 등)과의 비교, 관련 주식/경제 지표 영향 분석 등을 포함하세요.
+        - **시각화**: 필요시 HTML `<table>`을 사용하여 데이터를 비교하거나 정돈된 정보를 제공하세요.
     - **Tone**: 친근하고 편안한 말투 (~요체). 전문적이지만 딱딱하지 않게, 옆에서 설명해주는 느낌. 예: "~인데요", "~거든요", "~해볼게요", "~같아요".
     - **Prohibited**: 
+        - **NO Markdown Syntax**: Do NOT use Markdown formatting (e.g., `**bold**`, `# Heading`, `- list`, `[link](url)`). Everything MUST be written in pure HTML (e.g., `<b>bold</b>`, `<h2>Heading</h2>`, `<ul><li>list</li></ul>`, `<a href="...">link</a>`).
         - Do NOT use phrases like "AI SEO optimized", "I hope this helps", "In this blog post", or any meta-commentary about the writing process.
-        - **No Title Prefixes**: Do NOT use prefixes like `[긴급 분석]`, `[속보]`, `[Review]` in the H1 title. Keep the title clean and descriptive.
-    - Explain difficult terms simply.
-    - Provide concrete examples and data points.
+        - **No Title Prefixes**: Do NOT use prefixes like `[긴급 분석]`, `[속보]`, `[Review]` in the H1 title.
     - **Readability Rules**:
-        - Break long paragraphs into smaller 2-3 sentence chunks to prevent walls of text.
-        - Insert an empty `<p data-ke-size="size16">&nbsp;</p>` between text paragraphs to create visual breathing room (very important for mobile readers).
+        - Break long paragraphs into smaller 2-3 sentence chunks.
+        - Insert an empty `<p data-ke-size="size16">&nbsp;</p>` between text paragraphs.
         - Ensure a horizontal divider `<hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />` is placed right above every `<h2>` heading.
-    - Structure: Title (H1), Introduction (Hook: Greetings with "안녕하세요. 나야 돈기름입니다."), **Very Easy Example (Analogies)**, Detailed Analysis (H2s), Practical Implications (H3s), **Internal Links (Max 2 related posts from `.tmp/internal_links.json`)**, **FAQ (3-5 Q&A)**, Conclusion (Future Outlook).
-    - **Footer**: MUST include the following disclaimers at the very bottom:
+    - **Content Modules**: 
+        - Title (H1)
+        - Introduction (Hook: Greetings with "안녕하세요. 지랩봇입니다.")
+        - Detailed TOC
+        - Comprehensive Analysis Sections (8+ main sections)
+        - Case Studies or Global Comparisons
+        - **FAQ (10+ detailed Q&A for SEO)**
+        - Conclusion (Future Outlook & Final Thoughts).
+    - **Internal Links**: Max 3 related posts from `.tmp/internal_links.json`.
+    - **Footer**: MUST include the following disclaimers:
       > "Powered by jangGiraffe GitHub" (with a hyperlink to https://github.com/jangGiraffe/AI-Automation)
       > "포함된 이미지는 AI 기술을 활용하여 생성되었습니다."
 
