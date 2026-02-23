@@ -44,6 +44,7 @@ Before using this skill, ensure the following dependencies and environment varia
    TISTORY_PW_2=your_tech_password
    TISTORY_BLOG_NAME_2=your_tech_blog_name
    TISTORY_DEFAULT_TOPIC_2=IT,인공지능,스타트업
+   TISTORY_PERSONA_2=IT 트렌드에 민감한 로봇 (예시)
    
    # ... Add up to 5 blogs following this pattern (_1 to _5).
    ```
@@ -82,7 +83,10 @@ Before using this skill, ensure the following dependencies and environment varia
 
 ### 5. Generate Content (Step 4)
 - **Format**: HTML (ready to paste into a blog editor).
-- **Tone**: Professional, informative, yet friendly (친근한 ~요체).
+- **Persona & Tone**: 
+    - **Stricly Follow**: Look up `TISTORY_PERSONA_X` corresponding to the chosen `<BlogAlias>` in the `.env` file.
+    - **Style**: Embody this persona completely throughout the post. If no persona is defined, default to a professional yet friendly tone.
+    - **Tone**: The tone (degree of formality, vocabulary, etc.) should match the persona. Default is "친근한 ~요체" but can be overridden by the persona description.
 - **Requirements (Mega Content Standard)**:
     - **Style**: Strictly follow the CSS and HTML structure defined in `.agents/skills/tistory_post/templates/blog_post_template.html`.
     - **Image Rule**: `<figure>` 태그의 `data-ke-mobilestyle`은 반드시 `"widthContent"`를 사용.
@@ -94,7 +98,10 @@ Before using this skill, ensure the following dependencies and environment varia
         - 단순 뉴스 요약 금지. 
         - **입체적 분석**: 기술적 원리, 역사적 배경, 글로벌 시장(US, China 등)과의 비교, 관련 주식/경제 지표 영향 분석 등을 포함하세요.
         - **시각화**: 필요시 HTML `<table>`을 사용하여 데이터를 비교하거나 정돈된 정보를 제공하세요.
-    - **Tone**: 친근하고 편안한 말투 (~요체). 전문적이지만 딱딱하지 않게, 옆에서 설명해주는 느낌. 예: "~인데요", "~거든요", "~해볼게요", "~같아요".
+    - **Persona Alignment**:
+        - 단순 정보 전달을 넘어, 설정된 **페르소나의 관점**에서 분석과 의견을 제시하세요.
+        - 말투, 어조, 문장 구조 등이 페르소나의 성격(예: 냉철한 분석가, 다정한 이웃, 미래형 로봇 등)을 충실히 반영해야 합니다.
+    - **Tone**: 페르소나 설정에 따르되, 기본적으로 독자와 소통하는 느낌을 유지하세요.
     - **Prohibited**: 
         - **NO Markdown Syntax**: Do NOT use Markdown formatting (e.g., `**bold**`, `# Heading`, `- list`, `[link](url)`). Everything MUST be written in pure HTML (e.g., `<b>bold</b>`, `<h2>Heading</h2>`, `<ul><li>list</li></ul>`, `<a href="...">link</a>`).
         - Do NOT use phrases like "AI SEO optimized", "I hope this helps", "In this blog post", or any meta-commentary about the writing process.
@@ -105,7 +112,10 @@ Before using this skill, ensure the following dependencies and environment varia
         - Ensure a horizontal divider `<hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />` is placed right above every `<h2>` heading.
     - **Content Modules**: 
         - Title (H1)
-        - Introduction (Hook: Greetings with "안녕하세요. 지랩봇입니다.")
+        - **Introduction**: 
+            - **Persona-based Hook**: Greetings and introductions MUST align with the `TISTORY_PERSONA_X`.
+            - Do NOT simply say "안녕하세요. 지랩봇입니다." unless the persona is "지랩봇".
+            - Introduce yourself or set the stage in a way that fits the writer's concept.
         - Detailed TOC
         - Comprehensive Analysis Sections (8+ main sections)
         - Case Studies or Global Comparisons

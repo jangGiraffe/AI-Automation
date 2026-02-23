@@ -1,126 +1,134 @@
 <!--
-  Blog Post Template (Tistory Native Style)
-  ==========================================
-  이 템플릿은 티스토리 기본 에디터 스타일을 따릅니다.
-  커스텀 CSS 없이, 티스토리 hELLO 스킨의 네이티브 스타일만 사용합니다.
+  Blog Post Template (Human-Centric Editorial Style)
+  ==================================================
+  이 템플릿은 AI 특유의 딱딱한 구조를 탈피하고, 전문 에디터가 작성한 듯한 자연스러운 흐름을 지향합니다.
   
-  규칙:
-  - <h2>, <h3>에는 data-ke-size 속성을 사용합니다 (h2: "size26", h3: "size23")
-  - <p>에는 data-ke-size="size16" 속성을 사용합니다
-  - <ul>에는 style="list-style-type: disc;" data-ke-list-type="disc" 속성을 사용합니다
-  - 이미지는 <figure class="imageblock alignCenter"> 티스토리 기본 구조를 사용합니다
-  - ★ 이미지 data-ke-mobilestyle은 반드시 "widthContent"를 사용합니다 (widthOrigin 사용 금지!)
-    → widthOrigin은 원본 크기(1408px 등)로 렌더링되어 넓은 화면에서 본문 영역을 넘어 튀어나옵니다.
-    → widthContent는 콘텐츠 영역 폭에 맞게 자동 조절됩니다.
-  - <b> 태그로 강조합니다 (커스텀 하이라이트 CSS 없음)
-  - 커스텀 <style> 블록을 사용하지 않습니다
+  핵심 원칙:
+  - 무미건조한 번호 매기기(1., 2., Q1.)를 지양하고 서술형 제목을 권장합니다.
+  - 독자와의 교감(개인적인 소회, 통찰)을 위한 공간을 확보합니다.
+  - 티스토리 네이티브 스타일(data-ke-size)을 유지하여 가독성을 극대화합니다.
+  - ★ 이미지 data-ke-mobilestyle은 반드시 "widthContent"를 사용합니다.
 -->
 
 <p data-ke-size="size16">&nbsp;</p>
 
+<!-- 메인 히어로 이미지 -->
 <figure class="imageblock alignCenter" data-ke-mobilestyle="widthContent" data-filename="image1.png"
-    data-origin-width="640" data-origin-height="640">
+    data-origin-width="1200" data-origin-height="630">
     <span data-url="" data-phocus="">
-        <img src="image1.png" data-filename="image1.png" data-origin-width="640" data-origin-height="640" />
+        <img src="image1.png" data-filename="image1.png" />
     </span>
-    <figcaption>[Image Caption]</figcaption>
+    <figcaption>[이 글의 주제를 관통하는 상징적인 이미지 캡션]</figcaption>
 </figure>
 
-<h1>[Title]</h1>
+<h1>[제목 - 독자의 호기심을 자극하고 가치를 전달하는 제목]</h1>
 
-<p data-ke-size="size16">[Introduction Paragraph - Hook the reader]</p>
+<p data-ke-size="size16">&nbsp;</p>
 
+<!-- 서론: 페르소나의 목소리로 시작 -->
+<p data-ke-size="size16">[도입부 - 해당 분야의 전문가나 친근한 이웃의 시점에서 오늘 다룰 주제가 왜 중요한지, 어떤 계기로 글을 쓰게 되었는지 공감 가도록 서술합니다. AI 특유의 '안녕하세요
+    ~입니다' 식의 반복적 인사보다는 상황에 맞는 자연스러운 오프닝을 추천합니다.]</p>
+
+<p data-ke-size="size16">&nbsp;</p>
+
+<!-- 하이라이트 요약 -->
 <blockquote data-ke-style="style2">
-    <p data-ke-size="size16">💡 <b>핵심 포인트 요약</b></p>
+    <p data-ke-size="size16">🔖 <b>본문 내용을 한눈에 읽는 포인트</b></p>
     <ul style="list-style-type: disc;" data-ke-list-type="disc">
-        <li><b>[Key Point 1]</b>: [Description]</li>
-        <li><b>[Key Point 2]</b>: [Description]</li>
-        <li><b>[Key Point 3]</b>: [Description]</li>
+        <li><b>[핵심 내용 1]</b>: [단순 요약이 아닌, 이 글에서만 얻을 수 있는 유니크한 통찰]</li>
+        <li><b>[핵심 내용 2]</b>: [변화하는 트렌드나 놓치지 말아야 할 지점]</li>
+        <li><b>[핵심 내용 3]</b>: [글을 끝까지 읽은 후 독자가 얻게 될 가치]</li>
     </ul>
 </blockquote>
 
-<hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />
-
-<h2 data-ke-size="size26">1. [Section Title]</h2>
-
-<p data-ke-size="size16">[Content paragraph. Use <b>bold</b> for emphasis. Explain difficult terms simply with concrete
-    examples and data points.]</p>
-
-<p data-ke-size="size16">&nbsp;</p>
-
-<p data-ke-size="size16">[Additional content paragraph.]</p>
-
 <p data-ke-size="size16">&nbsp;</p>
 
 <hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />
 
-<h2 data-ke-size="size26">2. [Section Title]</h2>
+<!-- 섹션 1 -->
+<h2 data-ke-size="size26">[첫 번째 주제 - 자연스러운 서술형 제목]</h2>
+
+<p data-ke-size="size16">[본문 내용 - 사실 관계를 나열하기보다, 해당 사안이 우리 삶에 어떤 영향을 주는지 스토리텔링식으로 풀어냅니다. <b>중요한 키워드</b>는 강조하되, 문단 중간중간
+    작성자의 개인적인 생각이나 경험(또는 페르소나의 개성)을 녹여내세요.]</p>
+
+<p data-ke-size="size16">&nbsp;</p>
+
+<p data-ke-size="size16">[추가 분석 및 데이터 해석. 구체적인 수치나 사례가 있다면 독자가 이해하기 쉽게 설명해 줍니다.]</p>
+
+<p data-ke-size="size16">&nbsp;</p>
+
+<hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />
+
+<!-- 섹션 2: 시각적 환기 -->
+<h2 data-ke-size="size26">[두 번째 주제 - 궁금증을 자아내는 소제목]</h2>
 
 <p data-ke-size="size16">&nbsp;</p>
 
 <figure class="imageblock alignCenter" data-ke-mobilestyle="widthContent" data-filename="image2.png"
-    data-origin-width="1408" data-origin-height="768">
+    data-origin-width="1200" data-origin-height="630">
     <span data-url="" data-phocus="">
-        <img src="image2.png" data-filename="image2.png" data-origin-width="1408" data-origin-height="768" />
+        <img src="image2.png" data-filename="image2.png" />
     </span>
-    <figcaption>[Image Caption]</figcaption>
+    <figcaption>[본문의 신뢰도를 높여주는 보조 이미지 캡션]</figcaption>
 </figure>
 
-<h3 data-ke-size="size23">[Sub-section Title]</h3>
+<p data-ke-size="size16">&nbsp;</p>
 
-<p data-ke-size="size16">[Content paragraph.]</p>
+<h3 data-ke-size="size23">[세부 포인트 - 독자가 놓치기 쉬운 지점]</h3>
+
+<p data-ke-size="size16">[과거의 패턴이나 글로벌 사례와의 비교 분석을 통해 입체적으로 설명합니다. AI가 쓴 글처럼 느껴지지 않도록 '우리가 주목해야 할 이유'를 명확히 제시하세요.]</p>
 
 <p data-ke-size="size16">&nbsp;</p>
 
 <hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />
 
-<h2 data-ke-size="size26">3. [Section Title]</h2>
+<!-- 섹션 3: 인물/사례 중심 분석 -->
+<h2 data-ke-size="size26">[세 번째 주제 - 실전 적용 혹은 전략 제안]</h2>
 
-<p data-ke-size="size16">[Content paragraph.]</p>
+<p data-ke-size="size16">[독자가 이 정보를 바탕으로 내일부터 당장 무엇을 할 수 있을지, 혹은 어떤 관점을 가져야 할지 구체적인 가이드를 제공합니다.]</p>
 
 <p data-ke-size="size16">&nbsp;</p>
 
 <hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style1" />
 
-<h2 data-ke-size="size26">❓ FAQ: [Topic] Q&A</h2>
+<!-- FAQ: 자연스러운 대화형 -->
+<h2 data-ke-size="size26">💡 이런 부분, 궁금하지 않으신가요? (Q&A)</h2>
 
 <p data-ke-size="size16">&nbsp;</p>
 
-<h3 data-ke-size="size23">Q1. [Question]</h3>
-
-<p data-ke-size="size16">A1. [Answer]</p>
-
-<h3 data-ke-size="size23">Q2. [Question]</h3>
-
-<p data-ke-size="size16">A2. [Answer]</p>
-
-<h3 data-ke-size="size23">Q3. [Question]</h3>
-
-<p data-ke-size="size16">A3. [Answer]</p>
-
-<!-- More FAQ items as needed -->
+<h3 data-ke-size="size23">[사람들이 자주 묻거나 오해하는 질문]</h3>
+<p data-ke-size="size16">[단순 답변을 넘어, 배경과 맥락을 포함한 친절한 답변을 작성합니다.]</p>
 
 <p data-ke-size="size16">&nbsp;</p>
 
+<h3 data-ke-size="size23">[전문가만 아는 깊이 있는 질문]</h3>
+<p data-ke-size="size16">[페르소나의 전문성이 엿보이는 깊이 있는 통찰을 마지막 핵심 팁으로 전달하세요.]</p>
+
+<p data-ke-size="size16">&nbsp;</p>
+
+<!-- 추천 글 -->
 <blockquote data-ke-style="style3">
-    <p data-ke-size="size16">🔗 <b>함께 읽으면 도움이 되는 글</b></p>
+    <p data-ke-size="size16">📚 <b>함께 읽으면 인사이트가 확장되는 글</b></p>
     <ul style="list-style-type: disc;" data-ke-list-type="disc">
-        <li><a href="[Related_Post_URL_1]">[Related_Post_Title_1]</a></li>
-        <li><a href="[Related_Post_URL_2]">[Related_Post_Title_2]</a></li>
+        <li><a href="[Related_Post_URL_1]">[여기를 클릭해서 함께 읽어보세요 1]</a></li>
+        <li><a href="[Related_Post_URL_2]">[여기를 클릭해서 함께 읽어보세요 2]</a></li>
     </ul>
 </blockquote>
 
 <p data-ke-size="size16">&nbsp;</p>
 
+<!-- 마무리 멘트 -->
+<p data-ke-size="size16" style="text-align: center;">[페르소나 특유의 인사와 함께 마지막으로 독자의 반응을 이끌어내는 마무리 멘트]</p>
+
+<p data-ke-size="size16">&nbsp;</p>
+
+<!-- 하단 정보 영역 (최대한 정중하고 깔끔하게) -->
+<hr contenteditable="false" data-ke-type="horizontalRule" data-ke-style="style2" />
+
 <p data-ke-size="size16" style="text-align: center; color: #808080; font-size: 0.9em;">
-    [Hashtags]
+    [HashTags]
 </p>
 
 <p data-ke-size="size16" style="text-align: center; color: #a0a0a0; font-size: 0.85em;">
-    Powered by <a href="https://github.com/jangGiraffe/AI-Automation" target="_blank" rel="noopener"
-        style="color: #a0a0a0; text-decoration: underline;">jangGiraffe GitHub</a>
-</p>
-
-<p data-ke-size="size16" style="text-align: center; color: #a0a0a0; font-size: 0.8em;">
-    ※ 본 포스팅의 이미지는 AI(Google Gemini)를 통해 생성되었습니다. 실제와 다를 수 있습니다.
+    Created with Passion & Insight
 </p>
