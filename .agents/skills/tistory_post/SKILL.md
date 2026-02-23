@@ -88,7 +88,7 @@ Before using this skill, ensure the following dependencies and environment varia
     - **Style**: Embody this persona completely throughout the post. If no persona is defined, default to a professional yet friendly tone.
     - **Tone**: The tone (degree of formality, vocabulary, etc.) should match the persona. Default is "친근한 ~요체" but can be overridden by the persona description.
 - **Requirements (Mega Content Standard)**:
-    - **Style**: Strictly follow the CSS and HTML structure defined in `.agents/skills/tistory_post/templates/blog_post_template.html`.
+    - **Style**: Strictly follow the CSS and HTML structure defined in `.agents/skills/tistory_post/templates/blog_post_template.html`. **Note**: While maintaining the core design tokens and class-based layouts, you have the flexibility to adapt the structure as needed to best fit the content, rather than following the template as a rigid placeholder.
     - **Image Rule**: `<figure>` 태그의 `data-ke-mobilestyle`은 반드시 `"widthContent"`를 사용.
     - **Length**: **초장문 메가 콘텐츠 (30,000~40,000자 내외)**. 단순히 양을 늘리는 것이 아니라, 독자가 전자책 한 권을 읽는 듯한 깊이를 제공해야 합니다.
     - **Structural Depth**:
@@ -144,8 +144,10 @@ Before using this skill, ensure the following dependencies and environment varia
 2. **Generate Images**:
     - **Pre-check (Brain Search)**: `generate_image` 호출 전, **Brain 폴더**(`C:\Users\<USER>\.gemini\antigravity\brain`)를 먼저 수색하여 최근 생성된 이미지가 있는지 확인하세요.
     - **Condition**: Artifacts 및 Brain 폴더에서 **이미지를 하나도 찾지 못했을 경우에만** `generate_image`를 실행합니다.
-    - **Image 1 (Main)**: Realistic, high-quality photo style.
-    - **Image 2 (Context)**: Pixel art (Dot style), fantasy concept.
+    - **Image 1 (Main Hero)**: Realistic, high-quality photo style representing the overall core topic.
+    - **Image 2 (Middle Analysis)**: Detailed infographic or descriptive conceptual image.
+    - **Image 3 (Comparison/Global)**: World map, comparison chart, or global market visualization style.
+    - **Image 4 (Summary/Outro)**: Pixel art (Dot style) or symbolic fantasy concept for final wrap-up.
 
 3. **Verify Generation (Mandatory Brain Search — 자동 실행 필수)**:
     - **Context**: `generate_image` 호출 후, 툴의 성공/전송 취소/에러 여부와 관계없이 시스템이 내부적으로 이미지를 생성했을 가능성이 높습니다.
