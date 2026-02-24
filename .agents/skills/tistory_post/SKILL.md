@@ -88,7 +88,10 @@ Before using this skill, ensure the following dependencies and environment varia
     - **Style**: Embody this persona completely throughout the post. If no persona is defined, default to a professional yet friendly tone.
     - **Tone**: The tone (degree of formality, vocabulary, etc.) should match the persona. Default is "친근한 ~요체" but can be overridden by the persona description.
 - **Requirements (Mega Content Standard)**:
-    - **Style**: Strictly follow the CSS and HTML structure defined in `.agents/skills/tistory_post/templates/blog_post_template.html`. **Note**: While maintaining the core design tokens and class-based layouts, you have the flexibility to adapt the structure as needed to best fit the content, rather than following the template as a rigid placeholder.
+    - **Style**: `.agents/skills/tistory_post/templates/` 폴더의 템플릿 중 하나를 **랜덤하게 선택**하여 작성하세요. 
+      (포함된 스타일: `*_style.html`, `*_style_v2.html` 등 총 20종의 변형 제공). 
+      각 템플릿의 V1과 V2는 핵심 컨셉은 공유하되, 정보의 배치 순서나 시각적 강조점이 달라 매번 새로운 레이아웃을 제공합니다.
+      **Note**: While maintaining the core design tokens and class-based layouts, you have the flexibility to adapt the structure as needed to best fit the content, rather than following the template as a rigid placeholder.
     - **Image Rule**: `<figure>` 태그의 `data-ke-mobilestyle`은 반드시 `"widthContent"`를 사용.
     - **Length**: **초장문 메가 콘텐츠 (30,000~40,000자 내외)**. 단순히 양을 늘리는 것이 아니라, 독자가 전자책 한 권을 읽는 듯한 깊이를 제공해야 합니다.
     - **Structural Depth**:
@@ -142,12 +145,17 @@ Before using this skill, ensure the following dependencies and environment varia
         - **절대로** 이미 있는 Artifact를 무시하고 새로 만들지 마십시오. 이는 불필요한 비용과 시간을 낭비합니다.
 
 2. **Generate Images**:
+    - **Count Rule**: 생성할 이미지 개수는 선택한 템플릿의 `imageX.png` 플레이스홀더 개수에 맞춥니다.
+        - **1장**: `minimal_daily_style`
+        - **2장**: `essay_style`
+        - **3장**: `analyst_style`, `interview_style`, `comparison_style`, `guide_style`, `trend_report_style`, `storyteller_style`
+        - **4장**: `editorial_style`, `gallery_style`
     - **Pre-check (Brain Search)**: `generate_image` 호출 전, **Brain 폴더**(`C:\Users\<USER>\.gemini\antigravity\brain`)를 먼저 수색하여 최근 생성된 이미지가 있는지 확인하세요.
     - **Condition**: Artifacts 및 Brain 폴더에서 **이미지를 하나도 찾지 못했을 경우에만** `generate_image`를 실행합니다.
-    - **Image 1 (Main Hero)**: Realistic, high-quality photo style representing the overall core topic.
-    - **Image 2 (Middle Analysis)**: Detailed infographic or descriptive conceptual image.
-    - **Image 3 (Comparison/Global)**: World map, comparison chart, or global market visualization style.
-    - **Image 4 (Summary/Outro)**: Pixel art (Dot style) or symbolic fantasy concept for final wrap-up.
+    - **Prompt Guidelines**:
+        - **Image 1 (Main Hero)**: 전체 주제를 관통하는 고품질 리얼리스틱 사진 스타일.
+        - **Image 2~3 (Middle)**: 본문 내용에 특화된 인포그래픽, 기념물, 혹은 분위기를 고조시키는 감성 이미지.
+        - **Image 4 (Outro/Summary)**: 픽셀 아트(도트) 또는 상징적인 판타지 컨셉으로 글을 매듭짓는 스타일.
 
 3. **Verify Generation (Mandatory Brain Search — 자동 실행 필수)**:
     - **Context**: `generate_image` 호출 후, 툴의 성공/전송 취소/에러 여부와 관계없이 시스템이 내부적으로 이미지를 생성했을 가능성이 높습니다.
