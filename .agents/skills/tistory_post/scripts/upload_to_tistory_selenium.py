@@ -170,24 +170,56 @@ def main():
 
         # Helper for non-BMP characters (emojis)
         def safe_send_keys(element, text):
+            if not text:
+                text = "untitle"
             driver.execute_script("""
                 var element = arguments[0];
                 var text = arguments[1];
                 element.value = text;
                 element.dispatchEvent(new Event('input', { bubbles: true }));
                 element.dispatchEvent(new Event('change', { bubbles: true }));
+                element.dispatchEvent(new Event('blur', { bubbles: true }));
             """, element, text)
+            # Fallback check
+            val = element.get_attribute("value")
+            if not val:
+                element.send_keys(text)
 
         # Set Title
         title_match = re.search(r'<h1>(.*?)</h1>', content_html)
         title = title_match.group(1) if title_match else "AI Generated Blog Post"
-        
-        # Strip non-BMP characters (emojis) from title as requested
         title = "".join(c for c in title if ord(c) <= 0xFFFF)
         
         print(f"Setting title: {title}")
-        safe_send_keys(title_input, title)
-        time.sleep(1)
+        try:
+            # Scroll to title and click to focus
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", title_input)
+            time.sleep(0.5)
+            title_input.click()
+            time.sleep(0.5)
+            
+            # Use ActionChains to ensure the editor's internal state updates
+            # Select all and type/paste
+            actions = webdriver.ActionChains(driver)
+            actions.click(title_input)
+            actions.key_down(Keys.CONTROL).send_keys("a").key_up(Keys.CONTROL).perform()
+            actions.send_keys(Keys.BACKSPACE).perform()
+            time.sleep(0.5)
+            
+            # Using safe_send_keys as a backup, but primary is typing or pasting
+            pyperclip.copy(title)
+            actions.key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
+            actions.perform()
+            
+            # Final check/force
+            current_val = title_input.get_attribute("value")
+            if not current_val:
+                safe_send_keys(title_input, title)
+                
+            print(f"  Title set to: {title_input.get_attribute('value')[:20]}...")
+        except Exception as e:
+            print(f"  Warning: Title setting error: {e}")
+        time.sleep(2)
 
         # ----------------------------------------------------------------------
         # INITIAL CONTENT INJECTION (DRAFT)
@@ -623,11 +655,30 @@ def main():
             time.sleep(1)
 
             # 3. Final Publish (Private Save)
+            print("  Verifying title before final publish...")
+            try:
+                # Re-find title input to be safe
+                final_title_check = driver.find_element(By.ID, "post-title-inp")
+                t_val = final_title_check.get_attribute("value")
+                if not t_val or t_val.strip() == "":
+                    print("  Title is missing! Attempting emergency title injection...")
+                    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", final_title_check)
+                    final_title_check.click()
+                    time.sleep(0.5)
+                    pyperclip.copy(title if 'title' in locals() else "untitle")
+                    webdriver.ActionChains(driver).key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
+                    time.sleep(1)
+                else:
+                    print(f"  Title verified: {t_val[:20]}...")
+            except:
+                pass
+
             print("  Clicking 'Private Save' (#publish-btn)...")
             final_save_btn = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "publish-btn"))
             )
-            final_save_btn.click()
+            # Use JS click as it is more robust to overlays
+            driver.execute_script("arguments[0].click();", final_save_btn)
             
             print(">> POST PUBLISHED (Private)!")
             time.sleep(5)
