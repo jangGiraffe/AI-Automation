@@ -143,8 +143,8 @@ def main():
         WebDriverWait(driver, 120).until(
             EC.url_contains("tistory.com")
         )
-        print("Login seems successful.")
-        time.sleep(3)
+        print("Login detected (no longer on login page). Waiting 30 seconds for any final redirects or manual steps...")
+        time.sleep(30)
 
         # 5. Go to Write Page
         write_url = f"https://{blog_name}.tistory.com/manage/post"
@@ -168,15 +168,25 @@ def main():
                 f.write(driver.page_source)
             return
 
+        # Helper for non-BMP characters (emojis)
+        def safe_send_keys(element, text):
+            driver.execute_script("""
+                var element = arguments[0];
+                var text = arguments[1];
+                element.value = text;
+                element.dispatchEvent(new Event('input', { bubbles: true }));
+                element.dispatchEvent(new Event('change', { bubbles: true }));
+            """, element, text)
+
         # Set Title
         title_match = re.search(r'<h1>(.*?)</h1>', content_html)
         title = title_match.group(1) if title_match else "AI Generated Blog Post"
         
+        # Strip non-BMP characters (emojis) from title as requested
+        title = "".join(c for c in title if ord(c) <= 0xFFFF)
+        
         print(f"Setting title: {title}")
-        # It's a textarea, but send_keys works
-        # It's a textarea, but send_keys works
-        title_input.clear()
-        title_input.send_keys(title)
+        safe_send_keys(title_input, title)
         time.sleep(1)
 
         # ----------------------------------------------------------------------
@@ -550,7 +560,7 @@ def main():
             time.sleep(0.5)
             
             tag_input.clear()
-            tag_input.send_keys(hashtags)
+            safe_send_keys(tag_input, hashtags)
             tag_input.send_keys(Keys.ENTER)
             print("  Tags added.")
         except TimeoutException:
