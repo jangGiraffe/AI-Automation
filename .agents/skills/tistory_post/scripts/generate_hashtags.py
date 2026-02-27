@@ -73,7 +73,10 @@ def generate_hashtags(html_path):
                         if container:
                             container.append(hashtag_div)
                         else:
-                            soup.body.append(hashtag_div)
+                            if soup.body:
+                                soup.body.append(hashtag_div)
+                            else:
+                                soup.append(hashtag_div)
 
                 with open(html_path, 'w', encoding='utf-8') as f:
                     f.write(str(soup))

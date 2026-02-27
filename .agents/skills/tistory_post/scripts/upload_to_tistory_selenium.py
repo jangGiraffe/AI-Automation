@@ -592,8 +592,14 @@ def main():
             time.sleep(0.5)
             
             tag_input.clear()
-            safe_send_keys(tag_input, hashtags)
-            tag_input.send_keys(Keys.ENTER)
+            if hashtags:
+                for tag in hashtags.split(','):
+                    tag = tag.strip()
+                    if tag:
+                        tag_input.send_keys(tag)
+                        time.sleep(0.2)
+                        tag_input.send_keys(Keys.ENTER)
+                        time.sleep(0.2)
             print("  Tags added.")
         except TimeoutException:
             print("  Tag input (#tagText) not found within timeout.")
