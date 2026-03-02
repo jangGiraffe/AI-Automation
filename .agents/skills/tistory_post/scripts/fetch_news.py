@@ -10,6 +10,24 @@ import os
 import argparse
 from dotenv import load_dotenv
 
+def translate_to_english(text):
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        return text
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    data = {
+        "contents": [{"parts": [{"text": f"Translate this Korean news search query to English keywords. ONLY return the English keywords without any extra text or quotes: {text}"}]}]
+    }
+    req_data = json.dumps(data).encode('utf-8')
+    req = urllib.request.Request(url, data=req_data, headers={'Content-Type': 'application/json'})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res = json.loads(response.read().decode('utf-8'))
+            return res['candidates'][0]['content']['parts'][0]['text'].strip()
+    except Exception as e:
+        print(f"Translation error: {e}")
+        return text
+
 def fetch_google_news(query, hl="ko", gl="KR"):
     # ... existing code ...
     encoded_query = urllib.parse.quote(query + " when:1d") # Try adding Google search operator for 1 day
@@ -103,8 +121,9 @@ def main():
             all_news.extend(parse_news(kr_xml))
             
             # Fetch US News
-            print(f"Fetching US news for: {query}")
-            us_xml = fetch_google_news(query, hl="en", gl="US")
+            us_query = translate_to_english(query)
+            print(f"Fetching US news for: {query} (Translated: {us_query})")
+            us_xml = fetch_google_news(us_query, hl="en", gl="US")
             all_news.extend(parse_news(us_xml))
         else:
             print(f"Fetching news for: {query} (hl={args.hl}, gl={args.gl})")
