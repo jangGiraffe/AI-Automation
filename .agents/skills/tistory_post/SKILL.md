@@ -125,6 +125,10 @@ Before using this skill, ensure the following dependencies and environment varia
         - **FAQ (10+ detailed Q&A for SEO)**
         - Conclusion (Future Outlook & Final Thoughts).
     - **Internal Links**: Max 3 related posts from `.tmp/internal_links.json`.
+    - **Anti-AI Polish (Humanizer)**: 
+        - **Mandatory Step**: Before finalizing the HTML content, you MUST apply the rules from `.agents/skills/humanizer/SKILL.md`.
+        - Review the draft to remove "AI fingerprints" (e.g., words like "delve", "testament", overused Em dashes, and 3-part lists).
+        - Ensure the tone feels genuinely human, opinionated, and perfectly matches the persona. Do not leave soulless, generic upbeat conclusions.
     - **Footer**: MUST include the following disclaimers:
       > "Powered by jangGiraffe GitHub" (with a hyperlink to https://github.com/jangGiraffe/AI-Automation)
       > "포함된 이미지는 AI 기술을 활용하여 생성되었습니다."
