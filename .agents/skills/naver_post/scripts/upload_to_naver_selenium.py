@@ -127,28 +127,64 @@ def main():
         existing_style = bold.get('style', '')
         bold['style'] = f"color: #0054FF; font-weight: bold; {existing_style}".strip()
 
-    # Extract body blocks (html chunks, img formatting)
+    # Extract body blocks (html chunks, img blocks)
     blocks = []
     current_html_chunk = []
     
     # Process children of body if exists, else descendants
     root = soup.body if soup.body else soup
     
+    # We want to split the content into HTML chunks and Image paths
+    # Crucial: We must REMOVE the <img> tags from the HTML chunks so we don't paste local paths
     for element in root.children:
+        if element.name is None:
+            # Just text or whitespace
+            if str(element).strip():
+                current_html_chunk.append(str(element))
+            continue
+            
+        # Find all images in this top-level element (e.g., inside a <figure> or <p>)
+        img_tags = element.find_all('img')
         if element.name == 'img':
+            img_tags = [element]
+            
+        if img_tags:
+            # 1. Save any pending HTML before this image-containing element
             if current_html_chunk:
                 blocks.append(('html', "".join(current_html_chunk)))
                 current_html_chunk = []
             
-            src = element.get('src')
-            if src and not src.startswith('http') and not src.startswith('//'):
-                blocks.append(('img', src))
-        elif element.name is not None:
-            # any other block (h2, p, blockquote)
+            # 2. Extract image paths and remove the tags
+            for img in img_tags:
+                src = img.get('src')
+                if src and not src.startswith('http') and not src.startswith('//'):
+                    # Check if file exists relative to result folder
+                    img_abs_path = os.path.abspath(os.path.join(result_folder, src))
+                    if os.path.exists(img_abs_path):
+                        blocks.append(('img', src))
+                        print(f"Added image block: {src}")
+                    else:
+                        print(f"Warning: Image file not found: {img_abs_path}")
+                
+                # Remove the img tag so it's not pasted as a broken local link
+                img.decompose()
+            
+            # 3. If there's remaining content in the element (like a <figcaption>), append it
+            # We strip it to see if it's just empty tags now
+            element_str = str(element)
+            if BeautifulSoup(element_str, 'html.parser').get_text().strip():
+                current_html_chunk.append(element_str)
+        else:
+            # No images here, just add the whole element to the current chunk
             current_html_chunk.append(str(element))
 
     if current_html_chunk:
         blocks.append(('html', "".join(current_html_chunk)))
+
+    print(f"Total content blocks detected: {len(blocks)}", flush=True)
+    if not blocks:
+        print("CRITICAL: No content blocks found in HTML. Check parsing logic.", flush=True)
+        sys.exit(1)
 
     # Read hashtags
     hashtags = ""
@@ -157,7 +193,7 @@ def main():
             hashtags = f.read().strip().replace("#", "").replace(" ", ", ")
 
     # 3. Setup Selenium
-    print("Starting Chrome Driver...")
+    print("Starting Chrome Driver...", flush=True)
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
@@ -169,16 +205,17 @@ def main():
     try:
         # 4. Login to Naver
         login_url = "https://nid.naver.com/nidlogin.login"
-        print(f"Navigating to {login_url}...")
+        print(f"Navigating to {login_url}...", flush=True)
         driver.get(login_url)
 
         try:
-            WebDriverWait(driver, 10).until(
+            # Check if login form exists
+            WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.ID, "id"))
             )
             
             # Use clipboard paste to bypass captcha
-            print("Logging in via clipboard paste bypass...")
+            print("Login form detected. Logging in via clipboard paste bypass...", flush=True)
             id_input = driver.find_element(By.ID, "id")
             safe_send_keys_clipboard(driver, id_input, naver_id)
 
@@ -186,23 +223,23 @@ def main():
             safe_send_keys_clipboard(driver, pw_input, naver_pw)
 
             driver.find_element(By.ID, "log.login").click()
+            
+            print("Waiting for login to complete (Handle 2FA manually if prompted)...", flush=True)
+            WebDriverWait(driver, 60).until(EC.url_changes(login_url))
+            
         except TimeoutException:
-            print("Login form not found. Maybe already logged in?")
+            print("Login form not found. Assuming already logged in or redirected.", flush=True)
 
-        # Wait for login success
-        print("Waiting for login to complete (Handle 2FA manually if prompted)...")
-        WebDriverWait(driver, 60).until(
-            EC.url_changes(login_url)
-        )
         time.sleep(3) # Let sessions set
 
         # 5. Go to Write Page
         write_url = f"https://blog.naver.com/{blog_name}?Redirect=Write"
-        print(f"Navigating to write page: {write_url}...")
+        print(f"Navigating to write page: {write_url}...", flush=True)
         driver.get(write_url)
+        time.sleep(2)
 
         # 5. Handle initial popups / Help panels
-        print("Handling initial popups...")
+        print("Handling initial popups and editor loading...", flush=True)
         # Try both in default and iframe areas
         def close_popups():
             # Close 'Help', 'Tutorial', and 'Restore Draft' (작성 중인 글...) panels
@@ -221,47 +258,34 @@ def main():
                     btns = driver.find_elements(By.CSS_SELECTOR, sel)
                     for btn in btns:
                         if btn.is_displayed():
-                            # If it's a restore draft popup, we want to check for specific text if possible
-                            # but clicking 'cancel' is generally safe for these types of overlays at start
                             btn.click()
-                            print(f"Handled popup/help/draft-cancel using: {sel}")
+                            print(f"  Handled popup using: {sel}", flush=True)
                             time.sleep(1)
                 except: continue
 
-            # Extra check for the specific 'Restore Draft' text if needed
-            try:
-                # XPATH for the 'Cancel' button specifically in the restore draft container
-                restore_cancel = driver.find_element(By.XPATH, "//div[contains(@class, 'se-popup-container')]//button[contains(@class, 'se-popup-button-cancel')]")
-                if restore_cancel.is_displayed():
-                    restore_cancel.click()
-                    print("Specifically dismissed 'Restore Draft' popup via XPATH.")
-                    time.sleep(1)
-            except: pass
-
-        # 1st try in default context (sometimes overlays are here)
+        # 1st try in default context
         close_popups()
 
         # Switch to mainFrame iframe
         try:
-            WebDriverWait(driver, 10).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "mainFrame")))
-            print("Switched to mainFrame iframe.")
+            print("Attempting to switch to mainFrame iframe...", flush=True)
+            WebDriverWait(driver, 15).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "mainFrame")))
+            print("Switched to mainFrame iframe.", flush=True)
         except TimeoutException:
-            print("mainFrame not found. Assuming SmartEditor ONE is on main DOM.")
+            print("mainFrame not found. Proceeding with main DOM.", flush=True)
 
-        # 2nd try inside iframe (Editor popups are usually here)
+        # 2nd try inside iframe
         close_popups()
 
         # 6. Title Input
-        print("Setting title...")
+        print("Setting title...", flush=True)
         try:
-            # Re-find the title element using safe logic and click it
             title_container = WebDriverWait(driver, 20).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".se-documentTitle"))
             )
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", title_container)
             time.sleep(1)
             
-            # Click exactly on the placeholder span to ensure focus
             try:
                 placeholder = title_container.find_element(By.CSS_SELECTOR, "span.se-placeholder")
                 placeholder.click()
@@ -269,15 +293,13 @@ def main():
                 title_container.click()
             time.sleep(1)
 
-            # Type title
             pyperclip.copy(title)
             webdriver.ActionChains(driver).key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
             time.sleep(1)
+            print("Title set successfully.", flush=True)
 
-            # Explicitly move to body by clicking the main container or hitting ENTER
-            print("Moving focus to body...")
+            print("Moving focus to body...", flush=True)
             try:
-                # Try clicking the first paragraph placeholder or the main container
                 body_placeholder = driver.find_element(By.CSS_SELECTOR, ".se-component-content span.se-placeholder")
                 body_placeholder.click()
             except:
@@ -288,108 +310,164 @@ def main():
                     webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
             time.sleep(1)
         except Exception as e:
-            print(f"Warning: Title input failed: {e}")
+            print(f"Warning: Title input failed: {e}", flush=True)
 
         # 7. Body Input Block by Block
-        print("Typing body content and uploading images...")
+        block_count = len(blocks)
+        print(f"Typing body content (Total {block_count} blocks)...", flush=True)
         time.sleep(1)
         
         actions = webdriver.ActionChains(driver)
 
-        for block_type, content in blocks:
+        for i, (block_type, content) in enumerate(blocks):
+            print(f"\n[BLOCK {i+1}/{block_count}] Type: {block_type}", flush=True)
+            
             if block_type == 'html':
+                # Switch to iframe for typing content
+                try:
+                    driver.switch_to.default_content()
+                    WebDriverWait(driver, 10).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "mainFrame")))
+                except Exception as e:
+                    print(f"  Warning: Context switch to mainFrame failed: {e}", flush=True)
+
                 try:
                     plain_text = BeautifulSoup(content, 'html.parser').get_text()
                     set_clipboard_html(content, plain_text)
                 except Exception as e:
-                    print("Clipboard HTML set failed, fallback to plain.", e)
+                    print(f"  Clipboard HTML set failed, fallback to plain: {e}", flush=True)
                     pyperclip.copy(BeautifulSoup(content, 'html.parser').get_text())
                 
+                # Use actions with a small delay
                 actions.key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
-                time.sleep(1)
+                time.sleep(1.5)
                 
-                # Force reset style after EACH pasted chunk by typing a space at the end
-                # and then applying a "black" formatting block.
-                print("Resetting style chain to black...")
+                # Reset style chain to black by pasting a reset div
                 try:
-                    # Clear formatting by pasting a DIV with explicit black color.
-                    # This is more robust than a span in some editor versions.
                     set_clipboard_html('<div style="color:#000000; font-family:inherit;">&nbsp;</div>', " ")
-                    webdriver.ActionChains(driver).key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
+                    actions.key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
                     time.sleep(0.5)
-                except:
-                    pass
+                except: pass
 
-                # Adds extra empty lines for paragraph spacing
+                # Spacing
                 actions.send_keys(Keys.ENTER).perform()
-                time.sleep(0.3)
+                time.sleep(0.5)
                 actions.send_keys(Keys.ENTER).perform()
                 time.sleep(1)
 
             elif block_type == 'img':
                 abs_path = os.path.abspath(os.path.join(result_folder, content))
                 if os.path.exists(abs_path):
-                    print(f"Attempting image upload for: {abs_path}")
                     uploaded = False
                     
-                    # METHOD 1: Direct Hidden Input Injection (Most reliable if element is found)
+                    # METHOD: UI Click + PyAutoGUI
                     try:
-                        file_inputs = driver.find_elements(By.CSS_SELECTOR, "input[type='file']")
-                        for fi in file_inputs:
-                            accept = fi.get_attribute("accept")
-                            if accept and "image" in accept:
-                                # Make it visible just in case for older engines
-                                driver.execute_script("arguments[0].style.display='block'; arguments[0].style.visibility='visible';", fi)
-                                fi.send_keys(abs_path)
-                                print("Method 1 (Hidden Input) successful.")
-                                uploaded = True
-                                break
-                    except Exception as e:
-                        print(f"Method 1 failed: {e}")
+                        driver.maximize_window()
+                        time.sleep(1)
+                        
+                        # 1. Broad Search for the Photo Button
+                        print(f"  [IMAGE UPLOAD] Searching for Photo button to upload: {abs_path}", flush=True)
+                        
+                        photo_btn = None
+                        # Possible selectors based on user's snippet
+                        photo_selectors = [
+                            "button.se-image-toolbar-button[data-name='image']",
+                            "button[data-name='image'][data-log='dot.img']",
+                            "button.se-image-toolbar-button",
+                            "button[data-name='image']",
+                            "button.se-document-toolbar-basic-button",
+                            "//button[contains(., '사진')]" # XPath fallback
+                        ]
 
-                    # METHOD 2: UI Click + PyAutoGUI (Fallback)
-                    if not uploaded:
+                        def find_button():
+                            for sel in photo_selectors:
+                                try:
+                                    if sel.startswith("//"):
+                                        btn = driver.find_element(By.XPATH, sel)
+                                    else:
+                                        btn = driver.find_element(By.CSS_SELECTOR, sel)
+                                    
+                                    if btn.is_displayed():
+                                        return btn
+                                except: continue
+                            return None
+
+                        # Step A: Try Default Content
+                        driver.switch_to.default_content()
+                        photo_btn = find_button()
+                        
+                        # Step B: Try inside mainFrame if not found
+                        if not photo_btn:
+                            try:
+                                driver.switch_to.frame("mainFrame")
+                                photo_btn = find_button()
+                            except: pass
+                        
+                        # Step C: Try all other iframes as a last resort
+                        if not photo_btn:
+                            driver.switch_to.default_content()
+                            iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                            for frame in iframes:
+                                try:
+                                    driver.switch_to.frame(frame)
+                                    photo_btn = find_button()
+                                    if photo_btn: break
+                                except: 
+                                    driver.switch_to.default_content()
+                                    continue
+
+                        if not photo_btn:
+                            print("  !!! CRITICAL ERROR: Could not find the Photo button in any context.", flush=True)
+                            sys.exit(1)
+
+                        print(f"  Found Photo button! Clicking to trigger OS dialog...", flush=True)
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", photo_btn)
+                        time.sleep(1)
+                        
+                        # Use JS click to trigger the dialog
+                        driver.execute_script("arguments[0].click();", photo_btn)
+                        
+                        # 3. Handle OS File Dialog
+                        print("  Handling OS File Dialog (PyAutoGUI)...", flush=True)
+                        time.sleep(3) 
                         try:
-                            photo_btn = WebDriverWait(driver, 5).until(
-                                EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-name='image'], button.se-image-toolbar-button, .se-toolbar-item-image button"))
-                            )
-                            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", photo_btn)
-                            time.sleep(1)
-                            photo_btn.click()
-                            print("Method 2: Clicked Photo button. Waiting 3s for dialog...")
-                            time.sleep(3)
-
-                            # Robust PyAutoGUI sequence
-                            # 1. Clear field (Alt+N focuses filename in Windows)
                             pyautogui.hotkey('alt', 'n')
                             time.sleep(0.5)
-                            pyautogui.press('backspace', presses=10) # Clear
-                            
-                            # 2. Paste path
+                            pyautogui.press('backspace', presses=80)
+                            time.sleep(0.5)
                             pyperclip.copy(abs_path)
                             pyautogui.hotkey('ctrl', 'v')
                             time.sleep(1)
-                            
-                            # 3. Enter
                             pyautogui.press('enter')
-                            print("Method 2: Path sent via pyautogui.")
-                            uploaded = True
+                            print("  Path sent to dialog.", flush=True)
                         except Exception as e:
-                            print(f"Method 2 failed: {e}")
+                            print(f"  !!! PyAutoGUI interaction failed: {e}", flush=True)
+                            sys.exit(1)
+
+                        # 4. Success verification (Wait for rendering)
+                        print("  Waiting 15s for Naver to render the image block...", flush=True)
+                        time.sleep(15)
+                        uploaded = True
+                        print("  Image upload finalized.", flush=True)
+                        
+                    except Exception as e:
+                        print(f"  !!! CRITICAL UPLOAD FAILED: {e}", flush=True)
+                        sys.exit(1)
 
                     if uploaded:
-                        time.sleep(10) # Wait for upload processing
-                        # Click back to editor body to regain focus
+                        # Return focus to editor (iframe mainFrame)
                         try:
-                            driver.find_element(By.CSS_SELECTOR, ".se-main-container").click()
+                            driver.switch_to.default_content()
+                            WebDriverWait(driver, 10).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "mainFrame")))
+                            body = driver.find_element(By.CSS_SELECTOR, ".se-main-container")
+                            body.click()
+                            webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
                         except: pass
-                        
-                        actions = webdriver.ActionChains(driver)
-                        actions.send_keys(Keys.ENTER).perform()
-                        actions.send_keys(Keys.ENTER).perform()
                         time.sleep(1)
                 else:
-                    print(f"Warning: Local image not found at {abs_path}")
+                    print(f"  Warning: Local image missing: {abs_path}", flush=True)
+
+        print("\nAll blocks processed. Finalizing post...", flush=True)
+        time.sleep(2)
 
         # 8. PUBLISH PHASE
         print("Starting Publish Phase...")
