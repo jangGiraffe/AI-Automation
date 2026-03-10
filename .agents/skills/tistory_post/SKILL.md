@@ -14,9 +14,7 @@ Create an **ultra-long-form, high-impact 'Mega Content'** Tistory blog post (30,
 - Region: South Korea (KR)
 - Language: Korean (ko)
   - *Tip: If you want to fetch foreign news, specify the Host Language (`--hl`) and Geolocation (`--gl`) flags in the fetch step (e.g. `--hl en --gl US` for US English).*
-- **Google Drive**:
-    - Folder ID: Managed in `.env` as `GOOGLE_DRIVE_PARENT_FOLDER_ID`.
-    - Credentials Path: `credentials.json` (User must provide)
+
 
 ## Environment Setup
 Before using this skill, ensure the following dependencies and environment variables are configured.
@@ -29,7 +27,6 @@ Before using this skill, ensure the following dependencies and environment varia
    You can register up to 5 Tistory blogs using `_1`, `_2`, etc., and specify their custom alias (`TISTORY_ALIAS_1`).
    ```env
    GOOGLE_API_KEY=your_gemini_api_key
-   GOOGLE_DRIVE_PARENT_FOLDER_ID=your_gdrive_folder_id
 
    # Blog 1
    TISTORY_ALIAS_1=MONEY
@@ -48,8 +45,6 @@ Before using this skill, ensure the following dependencies and environment varia
    
    # ... Add up to 5 blogs following this pattern (_1 to _5).
    ```
-3. **Google Drive Credentials**:
-   - Place a `credentials.json` file in the root directory for Google Drive API access.
 
 ## Steps
 
@@ -189,15 +184,8 @@ Before using this skill, ensure the following dependencies and environment varia
 - Command: `py .agents/skills/tistory_post/scripts/generate_hashtags.py <path_to_html_file>`
 - Logic: Reads HTML text content, requests hashtags from Gemini API (REST), and appends them to the HTML.
 
-### 8. Upload to Google Drive (Step 7)
-- Command: `py .agents/skills/tistory_post/scripts/upload_to_gdrive.py result/<YYYY-MM-DD>`
-- **Logic**:
-    - Reads parent folder ID from `.env`.
-    - Checks for existing folder at `result/<YYYY-MM-DD>` (or creates indexed version if exists).
-    - Uploads all content to the date-indexed folder on Google Drive.
-- Requires `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`, `python-dotenv`.
 
-### 9. Upload to Tistory (Selenium) (Step 8)
+### 8. Upload to Tistory (Selenium) (Step 7)
 - **Goal**: Automate posting to Tistory blog using Selenium WebDriver for a specific `BlogAlias`.
 - **Command**: `py .agents/skills/tistory_post/scripts/upload_to_tistory_selenium.py result/<YYYY-MM-DD> <BlogAlias>` (Be sure to convert the alias to UPPERCASE).
 - **Prerequisites**:
